@@ -3,10 +3,10 @@ import AppBar from '@mui/material/AppBar';
 import {Box, Button, IconButton, Link, Toolbar, Typography} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import UserContext from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth";
 
 export default function PrimaryAppBar() {
-  const { currentUser } = useContext(UserContext);
-  console.log(currentUser)
+  const { currentUser } = useAuth();
   return (
     <AppBar position='static'>
       <Toolbar>
@@ -24,8 +24,8 @@ export default function PrimaryAppBar() {
             QRonicle
           </Link>
         </Box>
-        {currentUser
-          ? <Typography variant="body2">Hello, {currentUser.username}</Typography>
+        {Object.keys(currentUser).length > 0
+          ? <Typography variant="body2">Hello, {currentUser?.username}</Typography>
           : <Button variant="outline" href='/login'>Log in</Button>
         }
       </Toolbar>

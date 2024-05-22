@@ -3,7 +3,7 @@ import {Alert, Button, Divider, Grid, Paper, TextField, Typography} from "@mui/m
 import { GitHub, Google } from "@mui/icons-material";
 import axios from "../api/axios"
 import {useLocation, useNavigate} from "react-router-dom";
-import UserContext from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth";
 
 const LOGIN_URL = '/auth/login'
 
@@ -11,7 +11,7 @@ export default function Login() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
-  const { setCurrentUser } = React.useContext(UserContext);
+  const { setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,13 +26,15 @@ export default function Login() {
       LOGIN_URL,
       JSON.stringify({ username, password }),
       {
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       }
     )
     .then(result => {
       console.log(result);
       clearState();
       setCurrentUser(result.data)
+      // TODO: use location to return to previous page
       navigate("/", { replace: true })
     })
     .catch((e) => {

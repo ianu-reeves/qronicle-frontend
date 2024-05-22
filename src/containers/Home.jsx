@@ -1,22 +1,30 @@
 import {useEffect, useState} from 'react';
 import axios from "axios";
 import Item from "../components/Item";
-import { Grid } from "@mui/material";
+import {Button, Grid} from "@mui/material";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export default function Home() {
   const [items, setItems] = useState([]);
-  const fetchImages = (item) => {
-    return axios
-      .get(`http://localhost:8080/items/${item.id}/images`)
-      .then(images => {
-        return images.data;
-      });
-  };
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
+    const fetchImages = (item) => {
+      return axiosPrivate
+        .get(`http://localhost:8080/api/v1/items/${item.id}/images`,
+          {
+            withCredentials: true,
+          })
+        .then(images => {
+          return images.data;
+        });
+    };
     let newItems = [];
-    axios
-      .get('http://localhost:8080/items/user/busteduser')
+    axiosPrivate
+      .get('http://localhost:8080/api/v1/items/user/busteduser',
+        {
+          withCredentials: true,
+        })
       .then(results => {
         results.data.forEach(item => {
           fetchImages(item).then(results => {
@@ -25,11 +33,10 @@ export default function Home() {
           }).then(() => setItems(newItems))
         });
       })
-      .catch(() =>
-        console.log('An error occurred while trying to fetch item data.')
-      );
+      .catch(() => {
+      });
     },
-  []
+  [axiosPrivate]
   );
 
   //TODO: extract item grid to separate component for reuse in e.g. item search page
