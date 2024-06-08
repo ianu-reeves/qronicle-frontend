@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import PrimaryAppBar from "./components/AppBar";
+import PrimaryAppBar from "./components/PrimaryAppBar";
 import Router from "./components/Router";
 import { AuthProvider } from "./context/AuthProvider";
 

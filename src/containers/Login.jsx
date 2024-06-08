@@ -1,24 +1,47 @@
-import React from 'react';
-import {Alert, Button, Divider, Grid, Paper, TextField, Typography} from "@mui/material";
-import { GitHub, Google } from "@mui/icons-material";
+import React, {useEffect} from 'react';
+import {
+  Alert,
+  Avatar,
+  Button,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Paper,
+  TextField,
+  Typography
+} from "@mui/material";
+import GOOGLE_LOGO from '../images/google-logo.png';
+import GITHUB_LOGO from '../images/github-mark.png';
 import axios from "../api/axios"
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import LinkedLogoButton from "../components/LinkedLogoButton";
 
 const LOGIN_URL = '/auth/login'
+const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
 
 export default function Login() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
-  const { setCurrentUser } = useAuth();
+  const { setCurrentUser, persistLogin, setPersistLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const AVATAR_SIZE = 24;
 
   const clearState = () => {
     setUsername('');
     setPassword('');
   };
+
+  const togglePersistLogin = () => {
+    setPersistLogin(!persistLogin)
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persistLogin);
+  }, [persistLogin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,11 +54,10 @@ export default function Login() {
       }
     )
     .then(result => {
-      console.log(result);
       clearState();
-      setCurrentUser(result.data)
+      setCurrentUser(result.data);
       // TODO: use location to return to previous page
-      navigate("/", { replace: true })
+      navigate("/", { replace: true });
     })
     .catch((e) => {
       console.log(e)
@@ -93,11 +115,18 @@ export default function Login() {
               </Grid>
             <Grid item sx={{ padding: 1, marginBottom: 2 }}>
               <Button
-                variant="outlined"
+                variant="contained"
                 type="submit"
               >
                 Log in
               </Button>
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={<Checkbox onChange={togglePersistLogin}
+                                   checked={persistLogin} />}
+                label="Keep me logged in"
+              />
             </Grid>
           </form>
           <Divider sx={{ marginBottom: 2 }}>
@@ -106,23 +135,31 @@ export default function Login() {
             </Typography>
           </Divider>
           <Grid item sx={{ padding: 1 }}>
-            <Button
-              variant="contained"
-              startIcon={<Google />}
-              component="a"
-              href="http://localhost:8080/oauth2/authorization/google"
-            >
-              Log in using Google
-            </Button>
+            <LinkedLogoButton
+              src={GOOGLE_LOGO}
+              href={`${AUTHORIZATION_BASE_URL}/google`}
+              avatarSize={AVATAR_SIZE}
+              buttonText='Log in with Google'
+            />
           </Grid>
+          <Grid item sx={{ padding: 1, marginBottom: 2 }}>
+            <LinkedLogoButton
+              src={GITHUB_LOGO}
+              href={`${AUTHORIZATION_BASE_URL}/github`}
+              avatarSize={AVATAR_SIZE}
+              buttonText='Log in with GitHub'
+            />
+          </Grid>
+          <Divider />
           <Grid item sx={{ padding: 1 }}>
+            <Typography variant="h5">Need an account?</Typography>
             <Button
-              variant="contained"
-              startIcon={<GitHub />}
+              variant="outlined"
               component="a"
-              href="http://localhost:8080/oauth2/authorization/github"
+              href="/register"
+              sx={{ marginTop: 2 }}
             >
-              Log in using GitHub
+              Register
             </Button>
           </Grid>
         </Paper>

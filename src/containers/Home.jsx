@@ -3,9 +3,12 @@ import axios from "axios";
 import Item from "../components/Item";
 import {Button, Grid} from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../hooks/useAuth";
+import {Link} from "react-router-dom";
 
 export default function Home() {
   const [items, setItems] = useState([]);
+  const { currentUser } = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function Home() {
     };
     let newItems = [];
     axiosPrivate
-      .get('http://localhost:8080/api/v1/items/user/busteduser',
+      .get(`http://localhost:8080/api/v1/items/user/${currentUser.username}`,
         {
           withCredentials: true,
         })
@@ -36,7 +39,7 @@ export default function Home() {
       .catch(() => {
       });
     },
-  [axiosPrivate]
+  [currentUser?.username, axiosPrivate]
   );
 
   //TODO: extract item grid to separate component for reuse in e.g. item search page
@@ -45,6 +48,7 @@ export default function Home() {
       <Grid container margin="2%" spacing={3}>
         {items.map(item => <Item key={item.id} itemProperties={item} />)}
       </Grid>
+      <Link to="/test">TEST</Link>
     </>
   );
 };

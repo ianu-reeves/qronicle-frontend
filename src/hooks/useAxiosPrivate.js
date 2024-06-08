@@ -3,11 +3,13 @@ import {useEffect} from 'react';
 import useAuth from "./useAuth";
 
 import {useNavigate} from "react-router-dom";
+import useRefresh from "./useRefresh";
 
 const REFRESH_URL_ENDPOINT = '/auth/refresh';
 
 export default function useAxiosPrivate() {
   const {setCurrentUser} = useAuth();
+  const refresh = useRefresh();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,24 +21,12 @@ export default function useAxiosPrivate() {
         // unauthorized; attempt to refresh tokens
         if (err?.response?.status === 401 && !req?.attempted) {
           req.attempted = true;
-          await axios.post(REFRESH_URL_ENDPOINT, null, {
-            withCredentials: true,
-          })
-          .then(result => {
-            setCurrentUser(result.data)
-          })
-          // clear user context & redirect to login page with error
-          .catch((err) => {
-            setCurrentUser({});
-            //TODO: set up error context & add error to it here for display on login page
-            navigate('/login');
-          })
+          await refresh();
           return axiosPrivate(req);
         }
         return Promise.reject(err);
       }
     )
-
     return () => axiosPrivate.interceptors.response.eject(responseIntercept);
   }, [navigate, setCurrentUser]);
 
