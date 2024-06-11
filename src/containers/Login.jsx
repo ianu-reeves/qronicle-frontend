@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {
   Alert,
-  Avatar,
   Button,
   Checkbox,
   Divider,
@@ -14,9 +13,10 @@ import {
 import GOOGLE_LOGO from '../images/google-logo.png';
 import GITHUB_LOGO from '../images/github-mark.png';
 import axios from "../api/axios"
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LinkedLogoButton from "../components/LinkedLogoButton";
+import {toast} from "react-toastify";
 
 const LOGIN_URL = '/auth/login'
 const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
@@ -27,7 +27,6 @@ export default function Login() {
   const [error, setError] = React.useState('');
   const { setCurrentUser, persistLogin, setPersistLogin } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const AVATAR_SIZE = 24;
 
   const clearState = () => {
@@ -57,6 +56,7 @@ export default function Login() {
       clearState();
       setCurrentUser(result.data);
       // TODO: use location to return to previous page
+      toast(`Welcome back, ${result.data.username}!`)
       navigate("/", { replace: true });
     })
     .catch((e) => {

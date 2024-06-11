@@ -1,11 +1,10 @@
-import axios, {axiosPrivate} from "../api/axios";
+import {axiosPrivate} from "../api/axios";
 import {useEffect} from 'react';
 import useAuth from "./useAuth";
 
 import {useNavigate} from "react-router-dom";
 import useRefresh from "./useRefresh";
 
-const REFRESH_URL_ENDPOINT = '/auth/refresh';
 
 export default function useAxiosPrivate() {
   const {setCurrentUser} = useAuth();
@@ -28,7 +27,7 @@ export default function useAxiosPrivate() {
       }
     )
     return () => axiosPrivate.interceptors.response.eject(responseIntercept);
-  }, [navigate, setCurrentUser]);
+  }, [refresh, navigate, setCurrentUser]);
 
   return axiosPrivate;
 };

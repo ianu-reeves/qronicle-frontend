@@ -12,26 +12,37 @@ import {
 } from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import { registrationSchema } from "../validation/registrationSchema";
-import {ErrorMessage, Field, Form, Formik, useFormik} from "formik";
+import { Field, Form, Formik } from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
 export default function Register() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const navigate = useNavigate();
+  const { setCurrentUser } = useAuth();
 
   const inputFieldStyle = { margin: 1, maxWidth: '75%' };
 
-  const onSubmit = async (values, { setStatus }) => {
+  const onSubmit = async (values, { setFieldError, resetForm }) => {
     console.log(values);
     await axios
-      .post("/auth/register", values)
-      .then(result => console.log(result))
+      .post("/auth/register", values, { withCredentials: true })
+      .then(result => {
+        resetForm();
+        setCurrentUser(result.data);
+        navigate("/", { replace: true });
+        toast(`Welcome aboard, ${result.data.username}!`)
+      })
       .catch((e) => {
         if (e.response.status === 409) {
           console.log('409 DETECTED')
-          setStatus('duplicate-username');
+          setFieldError('username', 'That username is not available. Please try another one');
         }
+        toast.error("Please check the form & try again");
       })
     // actions.resetForm();
   };
