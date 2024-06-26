@@ -8,12 +8,15 @@ export default function ValidatedTextField({ field, form, ...props }) {
   const camelCase = replacement.charAt(0).toUpperCase() + replacement.slice(1);
   const error = Boolean(errors[name]) && Boolean(touched[name]);
 
+  const inputFieldStyle = { maxWidth: '75%' };
+
   return (
     <TextField
       label={camelCase}
       id={name}
       error={error}
       helperText={error ? errors[name] : null}
+      sx={inputFieldStyle}
       {...props}
       {...field}
     />

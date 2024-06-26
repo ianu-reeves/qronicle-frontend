@@ -1,7 +1,7 @@
 import './App.css';
 import React from 'react';
 import PrimaryAppBar from "./components/PrimaryAppBar";
-import Router from "./components/Router";
+import Router from "./Router";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
