@@ -6,19 +6,37 @@ import React, {useEffect} from "react";
 import {axiosPrivate} from "../api/axios";
 import {itemSchema} from "../validation/itemSchema";
 import TagInput from "../components/TagInput";
+import FileUpload from "../components/FileUpload";
+import {toast} from "react-toastify";
 
 export default function CreateItem() {
-  const [allTags, setAllTags] = React.useState([]);
-  const [addedTags, setAddedTags] = React.useState([]);
+  const MAX_FILE_SIZE = 1048576 * 10;  // 10 MB
+  const MAX_TAGS = 50;
 
   const gridItemStyling = {
     width: '100%',
   };
 
   const handleSubmit = async (values, { setFieldError, resetForm }) => {
+    console.log('inside submit')
+    const form = new FormData();
+    const itemForm = { name: values.name, description: values.description, tags: values.tags }
+    form.append("itemForm", new Blob([JSON.stringify(itemForm)], { type: 'application/json' }))
+    values.images.forEach((image) => form.append('files', image));
 
+    await axiosPrivate
+      .post('/api/v1/items', form, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } })
+      .then((result) => console.log('SUCCESS', result))
+      .catch((e) => console.log(e));
   };
 
+  const handleFileDrop = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      file.size > MAX_FILE_SIZE && toast.error('Files may not be more than 10MB each');
+      console.log(file);
+    }
+  };
 
 //TODO add validation schema
 // add tag input component
@@ -61,16 +79,24 @@ export default function CreateItem() {
               />
             </Grid>
             <Grid item sx={gridItemStyling}>
-              <FieldArray
+              <Field
                 name="tags"
                 component={TagInput}
+                maxTags={MAX_TAGS}
+              />
+            </Grid>
+            <Grid item sx={gridItemStyling}>
+              <Field
+                name="images"
+                inputId="itemImageUpload"
+                acceptTypes=".jpg, .jpeg, .png"
+                maxFileSize={MAX_FILE_SIZE}  // 10 MB
+                handleUpload={handleFileDrop}
+                component={FileUpload}
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" type="submit" onClick={(e) => {
-                e.preventDefault();
-                console.log(formik.values)
-              }}>
+              <Button type="submit" variant="contained">
                 Add item
               </Button>
             </Grid>

@@ -3,19 +3,13 @@ import {axiosPrivate} from "../api/axios";
 import {
   Autocomplete,
   Chip,
-  Grid,
-  TextField, Typography,
+  TextField,
 } from "@mui/material";
-import {toast} from "react-toastify";
 
-const MAX_TAGS = 10;
 
-export default function TagInput(props) {
-  const [newTag, setNewTag] = React.useState('');
+export default function TagInput({ form, maxTags }) {
   const [selected, setSelected] = React.useState(0);
   const [options, setOptions] = React.useState([]);
-  const { form, push, remove } = props;
-  const { tags } = form.values;
 
   useEffect(() => {
     axiosPrivate
@@ -23,13 +17,12 @@ export default function TagInput(props) {
         { withCredentials: true }
       )
       .then(results => setOptions(results.data.map(tag => tag.description)))
-      .catch(e => console.log(e));
+      .catch(() => {});
   }, []);
 
   const onChange = (newValue) => {
-    console.log('CHANGED')
-    setSelected(selected + 1);
     form.values.tags = newValue;
+    setSelected(form.values.tags.length);
   };
 
   //TODO: add listbox customization
@@ -38,7 +31,7 @@ export default function TagInput(props) {
     <Autocomplete
       freeSolo
       multiple
-      disabled={selected.length >= MAX_TAGS}
+      disabled={selected >= maxTags}
       renderTags={(values, getTagProps) =>
         values.map((option, index) => {
           const { key, ...tagProps } = getTagProps({ index });
@@ -53,7 +46,7 @@ export default function TagInput(props) {
           {...params}
           fullWidth
           sx={{ maxWidth: '75%' }}
-          label="Enter tags"
+          label={`Add tags (max ${maxTags})`}
         />
       )}
       options={options}

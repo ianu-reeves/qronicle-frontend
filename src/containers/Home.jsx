@@ -4,7 +4,6 @@ import {Button, Grid} from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -42,18 +41,13 @@ export default function Home() {
   [currentUser?.username, axiosPrivate]
   );
 
-  const notify = () => {
-    toast("Hello!");
-  }
-
   //TODO: extract item grid to separate component for reuse in e.g. item search page
   return (
     <>
       <Grid container margin="2%" spacing={3}>
         {items.map(item => <Item key={item.id} itemProperties={item} />)}
       </Grid>
-      <Link to="/test">TEST</Link>
-      <Button onClick={notify}>Toast</Button>
+      <Link to="/items/create">Item creation</Link>
     </>
   );
 };

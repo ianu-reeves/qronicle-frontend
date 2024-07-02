@@ -16,7 +16,6 @@ export default function ProtectedRoutes() {
   };
 
   useEffect(() => {
-    console.log(currentUser)
     let isMounted = true;
     const refreshSession = async () => {
       try {
@@ -27,7 +26,6 @@ export default function ProtectedRoutes() {
         isMounted && setLoading(false);
       }
     }
-    console.log()
     !hasAuth() && persistLogin ? refreshSession() : setLoading(false);
 
     return () => {
