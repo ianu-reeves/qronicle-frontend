@@ -18,7 +18,6 @@ export default function CreateItem() {
   };
 
   const handleSubmit = async (values, { setFieldError, resetForm }) => {
-    console.log('inside submit')
     const form = new FormData();
     const itemForm = { name: values.name, description: values.description, tags: values.tags }
     form.append("itemForm", new Blob([JSON.stringify(itemForm)], { type: 'application/json' }))
@@ -27,7 +26,7 @@ export default function CreateItem() {
     await axiosPrivate
       .post('/api/v1/items', form, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } })
       .then((result) => console.log('SUCCESS', result))
-      .catch((e) => console.log(e));
+      .catch(() => {});
   };
 
   const handleFileDrop = (e) => {

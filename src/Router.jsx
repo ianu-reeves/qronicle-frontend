@@ -6,18 +6,22 @@ import React from "react";
 import Test from "./containers/Test";
 import Register from "./containers/Register";
 import CreateItem from "./containers/CreateItem";
+import ItemPage from "./containers/ItemPage";
 
 export default function Router() {
   return (
     <Routes>
       {/* PUBLIC ROUTES */}
       <Route path="login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="register" element={<Register />} />
       {/* PROTECTED ROUTES */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
-        <Route path="/items/create" element={<CreateItem />} />
+        <Route path="test" element={<Test />} />
+        <Route path="items">
+          <Route path="create" element={<CreateItem />} />
+          <Route path=":itemId" element={<ItemPage />} />
+        </Route>
       </Route>
     </Routes>
   );

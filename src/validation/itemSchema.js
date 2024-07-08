@@ -7,9 +7,9 @@ const ALLOWED_FILE_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
 export const itemSchema = yup.object().shape({
   name: yup
     .string().trim()
-    .max(255, 'Item name cannot exceed 255 characters')
-    .min(1, 'Item name must have at least 1 character')
-    .required('Item must have a name'),
+    .max(255, 'ItemCard name cannot exceed 255 characters')
+    .min(1, 'ItemCard name must have at least 1 character')
+    .required('ItemCard must have a name'),
   description: yup
     .string().trim(),
   tags: yup

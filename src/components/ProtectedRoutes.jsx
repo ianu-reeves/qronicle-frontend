@@ -1,9 +1,8 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import React, {useEffect} from "react";
-import UserContext from "../context/AuthProvider";
 import useAuth from "../hooks/useAuth";
 import useRefresh from "../hooks/useRefresh";
-import {Typography} from "@mui/material";
+import {CircularProgress, Typography} from "@mui/material";
 
 //FIXME currently not storing credentials in context between reloads, but repopulates when access token expires
 // and refresh hook fires. Properly redirects to login page if refresh token is expired when attempting this
@@ -39,7 +38,12 @@ export default function ProtectedRoutes() {
         !persistLogin
           ? <Outlet />
           : loading
-            ? <Typography>Loading... Please wait...</Typography>
+            ? (
+              <>
+                <CircularProgress />
+                <Typography>Loading... Please wait</Typography>
+              </>
+            )
             : <Outlet />
       }
     </>
