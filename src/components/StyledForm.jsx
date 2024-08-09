@@ -1,6 +1,6 @@
 import {Grid, Paper, TextField} from "@mui/material";
 
-export default function StyledForm({ children }) {
+export default function StyledForm({ children, paperStyle }) {
   return (
     <Grid
       justifyContent="center"
@@ -10,7 +10,7 @@ export default function StyledForm({ children }) {
     >
       <Paper
         component={Grid}
-        sx={{ paddingTop: 3, paddingBottom: 3, width: '50%', marginTop: '10%' }}
+        sx={paperStyle}
         justifyContent="center"
         alignItems="center"
         container

@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Card, Grid, IconButton, Paper, Stack, Typography} from "@mui/material";
+import {Box, Grid, IconButton, Paper, Typography} from "@mui/material";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {toast} from "react-toastify";
 import {Close} from "@mui/icons-material";
@@ -27,11 +27,6 @@ export default function FileUpload({ form, field, ...props }) {
     document.getElementById(inputId).click();
   };
 
-  console.log('FIELD')
-  console.log(field)
-  console.log('FORM')
-  console.log(form)
-
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (file.size > maxFileSize) {
@@ -49,7 +44,6 @@ export default function FileUpload({ form, field, ...props }) {
   };
 
   const handleDelete = (index) => {
-    console.log(index)
     const newFiles = field.value;
     form.setFieldValue(newFiles.splice(index, 1));
   };
@@ -127,7 +121,6 @@ export default function FileUpload({ form, field, ...props }) {
                 item
                 xs
                 sx={{
-                  border: '1px dashed grey',
                   display: 'flex',
                   alignContent: 'center',
                   justifyContent: 'flex-start',

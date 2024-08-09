@@ -31,9 +31,9 @@ export default function Register() {
       .post("/auth/register", values, { withCredentials: true })
       .then(result => {
         resetForm();
-        setCurrentUser(result.data);
+        setCurrentUser(result.data.userDetails);
         navigate("/", { replace: true });
-        toast(`Welcome aboard, ${result.data.username}!`)
+        toast(`Welcome aboard, ${result.data.userDetails.username}!`)
       })
       .catch((e) => {
         if (e.response.status === 409) {
@@ -42,7 +42,6 @@ export default function Register() {
         }
         toast.error("Please check the form & try again");
       })
-    // actions.resetForm();
   };
 
   const gridItemStyling = {
@@ -122,7 +121,7 @@ export default function Register() {
               </Typography>
             </Grid>
             <Grid item sx={gridItemStyling}>
-              <FormControl required fullWidth sx={{maxWidth: '75%', justifySelf: 'center'}}>
+              <FormControl required fullWidth sx={{maxWidth: '15%', justifySelf: 'center'}}>
                 <InputLabel id="privacy-status-selector-label">Account status</InputLabel>
                 <Select
                   name="privacyStatus"

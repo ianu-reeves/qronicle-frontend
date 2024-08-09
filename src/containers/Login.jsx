@@ -38,6 +38,7 @@ export default function Login() {
     setPersistLogin(!persistLogin)
   };
 
+  // TODO: remove need to have this cookie present
   useEffect(() => {
     localStorage.setItem("persist", persistLogin);
   }, [persistLogin]);
@@ -54,9 +55,9 @@ export default function Login() {
     )
     .then(result => {
       clearState();
-      setCurrentUser(result.data);
+      setCurrentUser(result.data.userDetails);
       // TODO: use location to return to previous page
-      toast(`Welcome back, ${result.data.username}!`)
+      toast(`Welcome back, ${result.data.userDetails.username}!`)
       navigate("/", { replace: true });
     })
     .catch((e) => {

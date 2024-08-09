@@ -11,7 +11,7 @@ export default function useRefresh() {
       withCredentials: true,
     })
     .then(result => {
-      setCurrentUser(result.data)
+      setCurrentUser(result.data.userDetails)
     })
     // clear user context & redirect to login page with error
     .catch((err) => {

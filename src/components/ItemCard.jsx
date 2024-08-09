@@ -1,10 +1,13 @@
 import React from 'react';
-import { Card, CardContent, CardMedia, Grid, Link, Typography } from "@mui/material";
+import {Button, Card, CardContent, CardMedia, Grid, Link, Typography} from "@mui/material";
 import TagContainer from "./TagContainer";
 import Carousel from "react-material-ui-carousel";
+import useAuth from "../hooks/useAuth";
+import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/formatUtils";
 
 export default function ItemCard({ itemProperties, onClickImage }) {
   const images = itemProperties.images;
+  const { currentUser } = useAuth();
   const getCarouselProperties = () => {
     if (images.length <= 1) return {
       IndicatorIcon: null,
@@ -14,8 +17,8 @@ export default function ItemCard({ itemProperties, onClickImage }) {
 
   return (
     <>
-      <Card sx={{ height: '100%', width: '100%' }}>
-        <CardContent>
+      <Card id={`item-card-${itemProperties.id}`} sx={{ height: '100%', width: '100%' }}>
+        <CardContent id={`item-card-content-${itemProperties.id}`}>
           {
             itemProperties?.images?.length > 0
             ? <Carousel
@@ -29,14 +32,18 @@ export default function ItemCard({ itemProperties, onClickImage }) {
                       key={image.imageUrl}
                       image={image.imageUrl}
                       sx={{ height: '100%' }}
-                      onClick={() => onClickImage(image)}
+                      onClick={onClickImage
+                        ? () => onClickImage(image)
+                        : () => {}  // do nothing
+                      }
                     />
                   )
                 }
             </Carousel>
-            : <CardMedia
+            :
+              <CardMedia
                 image={"http://www.arideocean.com/wp-content/themes/arkahost/assets/images/default.png"}
-                sx={{ height: '100%' }}
+                sx={{ height: 400 }}
               />
           }
           <Typography variant="h4">
@@ -48,8 +55,17 @@ export default function ItemCard({ itemProperties, onClickImage }) {
               {itemProperties.name}
             </Link>
           </Typography>
+          {currentUser.username === itemProperties.ownerName &&
+            <Button
+              variant="outlined"
+              sx={{ marginTop: 2 }}
+              href={`/items/${itemProperties.id}/edit`}
+            >
+              Edit item
+            </Button>
+          }
           <Typography color="grey" variant="body2" sx={{ padding: 0.5 }}>
-            Uploaded by <Link underline='hover' sx={{ cursor: "pointer" }}>{itemProperties.ownerName}</Link>
+            Uploaded by <Link underline='hover' sx={{ cursor: "pointer" }}>{itemProperties.ownerName}</Link> on {convertDateWithBreaksUS(itemProperties.uploadDate)}
           </Typography>
           <Typography variant="body1">
             {itemProperties.description}
