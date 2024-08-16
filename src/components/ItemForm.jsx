@@ -6,10 +6,12 @@ import StyledForm from "./StyledForm";
 import ValidatedTextField from "./ValidatedTextField";
 import TagInput from "./TagInput";
 import FileUpload from "./FileUpload";
+import {Constants} from "../util/Constants";
 
 export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
-  const MAX_FILE_SIZE = 1048576 * 10;  // 10 MB
+  const { MAX_FILE_SIZE } = Constants;
   const MAX_TAGS = 50;
+
   const gridItemStyling = {
     width: '100%',
   };
@@ -20,7 +22,7 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
     description: item ? item.description : '',
     tags: item ? item.tags.map(tag => tag.description) : [],
     images: item ? item.images : [],
-  }
+  };
 
   return (
     <Formik
@@ -64,16 +66,23 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
             {!item &&
               // only display file upload if item is new
               // users can use item page to upload/ delete images for existing items
-              <Grid item sx={gridItemStyling}>
-                <Field
-                  name="images"
-                  inputId="itemImageUpload"
-                  acceptTypes=".jpg, .jpeg, .png"
-                  maxFileSize={MAX_FILE_SIZE}  // 10 MB
-                  handleUpload={handleFileDrop}
-                  component={FileUpload}
-                />
-              </Grid>
+              <>
+                <Grid item>
+                  <Typography variant='h5'>
+                    Select images to add
+                  </Typography>
+                </Grid>
+                <Grid item sx={gridItemStyling}>
+                  <Field
+                    name="images"
+                    inputId="itemImageUpload"
+                    acceptTypes=".jpg, .jpeg, .png"
+                    maxFileSize={MAX_FILE_SIZE}  // 10 MB
+                    handleUpload={handleFileDrop}
+                    component={FileUpload}
+                  />
+                </Grid>
+              </>
             }
             <Grid item>
               <Button disabled={!dirty} type="submit" variant="contained">

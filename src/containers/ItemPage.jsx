@@ -28,7 +28,6 @@ const ItemPage = () => {
     axiosPrivate
       .get(`/api/v1/items/${itemId}`, { withCredentials: true })
       .then(result => {
-        console.log(result)
         setItem(result.data)
       })
     .catch(() => {});

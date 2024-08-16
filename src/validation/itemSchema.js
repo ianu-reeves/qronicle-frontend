@@ -1,8 +1,7 @@
 import * as yup from 'yup';
+import { Constants } from "../util/Constants";
 
-const MAX_TAGS = 50;
-const MAX_ITEMS = 10;
-const MAX_FILE_SIZE_MB = 10;
+const { MAX_TAGS, MAX_IMAGES, MAX_FILE_SIZE } = Constants;
 const ALLOWED_FILE_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
 export const itemSchema = yup.object().shape({
   name: yup
@@ -23,9 +22,9 @@ export const itemSchema = yup.object().shape({
       yup.mixed()
         .test(
           'fileSize',
-          `Image cannot exceed ${MAX_FILE_SIZE_MB} MB`,
+          `Image cannot exceed ${MAX_FILE_SIZE} MB`,
           (val) => {
-            return val && val.size <= MAX_FILE_SIZE_MB * 1048576;
+            return val && val.size <= MAX_FILE_SIZE;
           }
         )
         .test(
@@ -36,5 +35,5 @@ export const itemSchema = yup.object().shape({
           }
         )
     )
-    .max(MAX_ITEMS, `Items may have a maximum of ${MAX_ITEMS} images each`)
+    .max(MAX_IMAGES, `Items may have a maximum of ${MAX_IMAGES} images each`)
 });

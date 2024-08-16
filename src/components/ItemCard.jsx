@@ -8,6 +8,8 @@ import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/formatU
 export default function ItemCard({ itemProperties, onClickImage }) {
   const images = itemProperties.images;
   const { currentUser } = useAuth();
+  const MEDIA_HEIGHT = 400;
+
   const getCarouselProperties = () => {
     if (images.length <= 1) return {
       IndicatorIcon: null,
@@ -16,14 +18,14 @@ export default function ItemCard({ itemProperties, onClickImage }) {
   }
 
   return (
-    <>
+    <div style={{ height: '100%' }}>
       <Card id={`item-card-${itemProperties.id}`} sx={{ height: '100%', width: '100%' }}>
         <CardContent id={`item-card-content-${itemProperties.id}`}>
           {
             itemProperties?.images?.length > 0
             ? <Carousel
                 duration={1000}
-                height={400}
+                height={MEDIA_HEIGHT}
                 {...getCarouselProperties()}
               >
                 {
@@ -43,7 +45,7 @@ export default function ItemCard({ itemProperties, onClickImage }) {
             :
               <CardMedia
                 image={"http://www.arideocean.com/wp-content/themes/arkahost/assets/images/default.png"}
-                sx={{ height: 400 }}
+                sx={{ height: MEDIA_HEIGHT }}
               />
           }
           <Typography variant="h4">
@@ -55,7 +57,7 @@ export default function ItemCard({ itemProperties, onClickImage }) {
               {itemProperties.name}
             </Link>
           </Typography>
-          {currentUser.username === itemProperties.ownerName &&
+          {currentUser.username === itemProperties.owner.username &&
             <Button
               variant="outlined"
               sx={{ marginTop: 2 }}
@@ -65,7 +67,12 @@ export default function ItemCard({ itemProperties, onClickImage }) {
             </Button>
           }
           <Typography color="grey" variant="body2" sx={{ padding: 0.5 }}>
-            Uploaded by <Link underline='hover' sx={{ cursor: "pointer" }}>{itemProperties.ownerName}</Link> on {convertDateWithBreaksUS(itemProperties.uploadDate)}
+            Uploaded by <Link
+              href={`/profile/${itemProperties.owner.username}`}
+              underline='hover'
+              sx={{ cursor: "pointer" }}
+            >
+              {itemProperties.owner.username}</Link> on {convertDateWithBreaksUS(itemProperties.uploadDate)}
           </Typography>
           <Typography variant="body1">
             {itemProperties.description}
@@ -73,6 +80,6 @@ export default function ItemCard({ itemProperties, onClickImage }) {
           <TagContainer tags={itemProperties.tags} />
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 };

@@ -1,47 +1,98 @@
 import React from 'react';
-import {Card, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar} from "@mui/material";
-import {Close} from "@mui/icons-material";
+import {Card, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar, Typography} from "@mui/material";
+import {Add, Close} from "@mui/icons-material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import {toast} from "react-toastify";
+import {Constants} from "../util/Constants";
 
-export default function ImageGrid({ width, item }) {
+const DISPLAY_HEIGHT = 300;
+
+export default function ImageGrid({ width, images, itemBar }) {
   const axiosPrivate = useAxiosPrivate();
-  const [images, setImages] = React.useState(item.images);
-  const handleDelete = (image) => {
-    axiosPrivate
-      .delete(`/api/v1/items/${item.id}/images/${image.id}`,{ withCredentials: true })
-      .then(result => {
-        console.log(result);
-        setImages(result.data.images);
-      })
-      .catch(() => {})
+  const { MAX_FILE_SIZE, MAX_IMAGES } = Constants;
+
+  const handleClick = () => {
+    document.getElementById('file-upload').click();
+  };
+
+  const handleUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach((file, index) => {
+      if (file.size > MAX_FILE_SIZE) {
+        files.splice(index, 1);
+        return toast.error(
+          `Failed to upload ${file.name}\nFiles cannot be larger than ${MAX_FILE_SIZE/ 1048576} MB`);
+      }
+    });
+    if (files.length + images.length > MAX_IMAGES) {
+      return toast.error(`Items cannot have more than ${MAX_IMAGES} images each.`);
+    }
+
+
+    // TODO: add controller method
+    //  Add validation
+    // axiosPrivate
+    //   .put()
+    // files.forEach((file, index) => {
+    //   if (file.size > MAX_FILE_SIZE) {
+    //     toast.error(`Failed to upload ${file.name}\nFiles cannot be larger than ${MAX_FILE_SIZE/ 1048576} MB`);
+    //     files.splice(index, 1);
+    //   }
+    // })
   };
 
   return (
-    <ImageList id={`image-list-${item.id}`} cols={width} sx={{paddingLeft: 2, paddingRight: 2 }}>
+    <ImageList
+      id={`image-list`}
+      cols={width}
+      sx={{paddingLeft: 2, paddingRight: 2 }}
+      rowHeight={DISPLAY_HEIGHT}
+    >
       {images.map((image) => (
-        <ImageListItem key={image.name}>
+        <ImageListItem key={`image-list-item-${image.name}`}>
           <img
             alt=''
             src={image.imageUrl}
+            style={{ height: DISPLAY_HEIGHT }}
           />
-          <ImageListItemBar
-            position="top"
-            sx={{
-              background:
-                'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, ' +
-                'rgba(0,0,0,0.1) 70%, rgba(0,0,0,0) 100%)',
-            }}
-            actionIcon={
-              <IconButton
-                sx={{ color: 'white' }}
-                onClick={() => handleDelete(image)}
-              >
-                <Close />
-              </IconButton>
-            }
-          />
+          {itemBar && itemBar(image)}
         </ImageListItem>
       ))}
+      {images.length < MAX_IMAGES &&
+        // show tile to add new images if not all image slots have been used
+        <Grid
+          container
+          direction='column'
+          sx={{
+            minHeight: DISPLAY_HEIGHT,
+            alignSelf: 'center',
+            justifySelf: 'center',
+            alignContent: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            border: '2px lightgrey solid',
+            borderRadius: 2,
+          }}
+        >
+          <Grid item>
+            <IconButton onClick={handleClick} sx={{height: 100, width: 100}}>
+              <input
+                id='file-upload'
+                type="file"
+                style={{display: 'none'}}
+                accept=".jpg, .jpeg, .png"
+                onChange={handleUpload}
+              />
+              <Add fontSize='large'/>
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <Typography variant='h6'>
+              Add new
+            </Typography>
+          </Grid>
+        </Grid>
+      }
     </ImageList>
   );
 };

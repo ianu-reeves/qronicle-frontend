@@ -17,7 +17,12 @@ export default function CreateItem() {
     values.images.forEach((image) => form.append("files", image));
 
     await axiosPrivate
-      .post('/api/v1/items', form, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } })
+      .post('/api/v1/items', form, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then((result) => {
         resetForm();
         toast("Item added!");

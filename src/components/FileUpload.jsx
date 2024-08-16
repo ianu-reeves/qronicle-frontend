@@ -3,6 +3,7 @@ import {Box, Grid, IconButton, Paper, Typography} from "@mui/material";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {toast} from "react-toastify";
 import {Close} from "@mui/icons-material";
+import FileList from "./FileList";
 
 const defaultStyle = {
   border: '4px solid lightgreen',
@@ -23,23 +24,31 @@ const errorStyle = {
 export default function FileUpload({ form, field, ...props }) {
   const { acceptTypes, maxFileSize, inputId } = props;
   const { value } = field;
+
   const handleClick = () => {
     document.getElementById(inputId).click();
   };
 
   const handleUpload = (e) => {
-    const file = e.target.files[0];
-    if (file.size > maxFileSize) {
-      toast.error(`Files cannot be larger than ${maxFileSize/ 1024} MB`);
-      return;
-    }
-    form.setFieldValue(field.name, [...field.value, file]);
+    const files = Array.from(e.target.files);
+    files.forEach((file, index) => {
+      if (file.size > maxFileSize) {
+        toast.error(`Failed to upload ${file.name}\nFiles cannot be larger than ${maxFileSize/ 1048576} MB`);
+        files.splice(index, 1);
+      }
+    })
+    form.setFieldValue(field.name, [...field.value, ...files]);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    console.log(e)
-    const files = e.dataTransfer.files;
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach((file, index) => {
+      if (file.size > maxFileSize) {
+        toast.error(`Failed to upload ${file.name}\nFiles cannot be larger than ${maxFileSize/ 1048576} MB`);
+        files.splice(index, 1);
+      }
+    })
     form.setFieldValue(field.name, [...field.value, ...files]);
   };
 
@@ -103,47 +112,7 @@ export default function FileUpload({ form, field, ...props }) {
             }
           </Grid>
         </Box>
-        <Grid
-          container
-          justifyContent="center"
-          sx={{ marginTop: 1 }}
-        >
-          {value.map((file, index) => (
-            <Paper
-              component={Grid}
-              elevation={3}
-              key={`${file.name}-grid-item`}
-              container
-              rowSpacing={1}
-              sx={{ width: '75%', justifyContent: 'start', marginTop: 1 }}
-            >
-              <Grid
-                item
-                xs
-                sx={{
-                  display: 'flex',
-                  alignContent: 'center',
-                  justifyContent: 'flex-start',
-                  paddingLeft: 1,
-              }}
-              >
-                <Typography sx={{ justifySelf: 'start' }}>{file.name}</Typography>
-              </Grid>
-              <Grid
-                item
-                xs
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'flex-end'
-                }}
-              >
-                <IconButton onClick={() => handleDelete(index)}>
-                  <Close />
-                </IconButton>
-              </Grid>
-            </Paper>
-          ))}
-        </Grid>
+        <FileList files={value} handleDelete={handleDelete} />
       </Grid>
     </div>
   );
