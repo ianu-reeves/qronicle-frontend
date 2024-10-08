@@ -7,29 +7,30 @@ import React from "react";
 import useGlobalTheme from "../hooks/useGlobalTheme";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {toast} from "react-toastify";
+import UndecoratedNavLink from "../components/UndecoratedNavLink";
 
 export default function EditProfilePage() {
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const classes = useGlobalTheme();
   const axiosPrivate = useAxiosPrivate();
 
-  const handleSubmit = (values) => {
-    console.log(values)
+  const handleSubmit = (values, { resetForm }) => {
     axiosPrivate
       .put('/api/v1/users', values, { withCredentials: true })
       .then(results => {
-        console.log('USER')
-        console.log(results.data)
+        resetForm();
+        setCurrentUser(results.data)
         toast.success('Profile updated successfully!')
       })
       .catch(() => {
         console.log('error')});
   };
-  console.log(currentUser)
+
   return (
     <Formik
       initialValues={{...currentUser}}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
       {formik => (
         <Form>
@@ -82,14 +83,14 @@ export default function EditProfilePage() {
               />
             </Grid>
             <Grid item>
-              <Button type="submit" variant='contained'>
+              <Button type="submit" variant='contained' disabled={!formik.dirty}>
                 Update
               </Button>
             </Grid>
             <Grid item sx={{ marginBottom: 2 }}>
               <Typography>
-                Click <Link href='/change-password'>HERE</Link> to change your password
-                or <Link>HERE</Link> to change your email address
+                Click <UndecoratedNavLink to='/profile/changePassword'>HERE</UndecoratedNavLink> to change your password
+                or <UndecoratedNavLink to='/change-email'>HERE</UndecoratedNavLink> to change your email address
               </Typography>
             </Grid>
           </StyledForm>

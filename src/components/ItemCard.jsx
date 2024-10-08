@@ -4,6 +4,8 @@ import TagContainer from "./TagContainer";
 import Carousel from "react-material-ui-carousel";
 import useAuth from "../hooks/useAuth";
 import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/formatUtils";
+import {NavLink} from "react-router-dom";
+import UndecoratedNavLink from "./UndecoratedNavLink";
 
 export default function ItemCard({ itemProperties, onClickImage }) {
   const images = itemProperties.images;
@@ -21,17 +23,15 @@ export default function ItemCard({ itemProperties, onClickImage }) {
     <div style={{ height: '100%' }}>
       <Card id={`item-card-${itemProperties.id}`} sx={{ height: '100%', width: '100%' }}>
         <CardContent id={`item-card-content-${itemProperties.id}`}>
-          {
-            itemProperties?.images?.length > 0
-            ? <Carousel
+          {<Carousel
                 duration={1000}
                 height={MEDIA_HEIGHT}
                 {...getCarouselProperties()}
               >
-                {
-                  itemProperties.images.map(image =>
+                {itemProperties?.images?.length > 0
+                  ? itemProperties.images.map(image =>
                     <CardMedia
-                      key={image.imageUrl}
+                      key={`${itemProperties.id}-${image.imageUrl}`}
                       image={image.imageUrl}
                       sx={{ height: '100%' }}
                       onClick={onClickImage
@@ -40,39 +40,35 @@ export default function ItemCard({ itemProperties, onClickImage }) {
                       }
                     />
                   )
+                  // turn into array so Carousel generates empty item selector div to maintain spacing
+                  : Array.of(
+                    // card with placeholder image
+                    <CardMedia
+                      key={`${itemProperties.id}-placeholder-image`}
+                      image="http://www.arideocean.com/wp-content/themes/arkahost/assets/images/default.png"
+                      sx={{ height: '100%' }}
+                    />
+                  )
                 }
             </Carousel>
-            :
-              <CardMedia
-                image={"http://www.arideocean.com/wp-content/themes/arkahost/assets/images/default.png"}
-                sx={{ height: MEDIA_HEIGHT }}
-              />
           }
           <Typography variant="h4">
-            <Link
-              href={`/items/${itemProperties.id}`}
-              underline='hover'
-              sx={{ cursor: 'pointer', color: 'black' }}
+            <NavLink
+              to={`/items/${itemProperties.id}`}
+              style={{ cursor: 'pointer', color: 'black', textDecoration: 'none' }}
             >
               {itemProperties.name}
-            </Link>
+            </NavLink>
           </Typography>
           {currentUser.username === itemProperties.owner.username &&
-            <Button
-              variant="outlined"
-              sx={{ marginTop: 2 }}
-              href={`/items/${itemProperties.id}/edit`}
-            >
-              Edit item
-            </Button>
+            <NavLink to={`/items/${itemProperties.id}/edit`}>
+              <Button variant="outlined" sx={{ marginTop: 2 }}>Edit item</Button>
+            </NavLink>
           }
           <Typography color="grey" variant="body2" sx={{ padding: 0.5 }}>
-            Uploaded by <Link
-              href={`/profile/${itemProperties.owner.username}`}
-              underline='hover'
-              sx={{ cursor: "pointer" }}
-            >
-              {itemProperties.owner.username}</Link> on {convertDateWithBreaksUS(itemProperties.uploadDate)}
+            Uploaded by <UndecoratedNavLink to={`/profile/${itemProperties.owner.username}`}>{itemProperties.owner.username}
+              </UndecoratedNavLink>
+            on {convertDateWithBreaksUS(itemProperties.uploadDate)}
           </Typography>
           <Typography variant="body1">
             {itemProperties.description}

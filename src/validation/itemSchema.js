@@ -27,13 +27,13 @@ export const itemSchema = yup.object().shape({
             return val && val.size <= MAX_FILE_SIZE;
           }
         )
-        .test(
-          'allowedFormat',
-          `File type not allowed`,
-          (val) => {
-            return val && ALLOWED_FILE_TYPES.includes(val.type);
-          }
-        )
+        // .test(
+        //   'allowedFormat',
+        //   `File type not allowed`,
+        //   (val) => {
+        //     return val && ALLOWED_FILE_TYPES.includes(val.type);
+        //   }
+        // )
     )
     .max(MAX_IMAGES, `Items may have a maximum of ${MAX_IMAGES} images each`)
 });

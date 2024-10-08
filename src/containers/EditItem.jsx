@@ -87,17 +87,12 @@ export default function EditItem() {
   };
 
   const handleUpdateDetails = async (values, { resetForm }) => {
-    // const form = new FormData();
-    // const itemForm = { id: item?.id, name: values.name, description: values.description, tags: values.tags }
-    // console.log('ITEMFORM: ', itemForm)
-    // form.append("item", new Blob([JSON.stringify(itemForm)], { type: 'application/json' }))
-    // values.images.forEach((image) => form.append('files', image));
-
+    console.log('inside updater')
     axiosPrivate
       .put('/api/v1/items', values, { withCredentials: true })
       .then((result) => {
-        resetForm();
         setItem(result.data);
+        resetForm();
         toast.success('Item updated successfully!');
       })
       .catch(() => {});
@@ -130,12 +125,11 @@ export default function EditItem() {
       })
   };
 
-  const handleDeleteImage = (image) => {
-    console.log('inside handleDelete')
-    axiosPrivate
+  const handleDeleteImage = async (image) => {
+    await axiosPrivate
       .delete(`/api/v1/items/${item.id}/images/${image.id}`,{ withCredentials: true })
       .then(result => {
-        console.log(result);
+        toast.success(`Successfully deleted ${image.name}`);
         setImages(result.data.images);
       })
       .catch(() => {})
@@ -146,7 +140,6 @@ export default function EditItem() {
     newFiles.splice(index, 1);
     setFiles(newFiles);
   };
-
   // TODO: adjust so width prop passed to ImageGrid is based on screen width
   return (
     loading
@@ -194,7 +187,7 @@ export default function EditItem() {
                   direction='column'
                   sx={{
                     width: '100%',
-                    height: '100%',
+                    height: DISPLAY_HEIGHT,
                     justifyContent: 'center',
                     alignContent: 'center',
                     justifySelf: 'center',
@@ -210,7 +203,7 @@ export default function EditItem() {
                   </Grid>
                   <Grid item>
                     <Typography variant='h5'>
-                      Add more images
+                      Add {images.length > 0 ? 'more ' : ''}images
                     </Typography>
                   </Grid>
                 </Grid>

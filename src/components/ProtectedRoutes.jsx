@@ -19,8 +19,8 @@ export default function ProtectedRoutes() {
     const refreshSession = async () => {
       try {
         await refresh();
-      } catch (err) {
-        console.log(err);
+      } catch {
+        console.log('Could not refresh');
       } finally {
         isMounted && setLoading(false);
       }

@@ -1,5 +1,14 @@
 import React from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Tooltip,
+  Typography
+} from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { itemSchema } from "../validation/itemSchema";
 import StyledForm from "./StyledForm";
@@ -7,6 +16,7 @@ import ValidatedTextField from "./ValidatedTextField";
 import TagInput from "./TagInput";
 import FileUpload from "./FileUpload";
 import {Constants} from "../util/Constants";
+import {Info} from "@mui/icons-material";
 
 export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
   const { MAX_FILE_SIZE } = Constants;
@@ -22,6 +32,15 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
     description: item ? item.description : '',
     tags: item ? item.tags.map(tag => tag.description) : [],
     images: item ? item.images : [],
+    privacyStatus: item ? item.privacyStatus : '',
+  };
+
+  const PrivacyTooltip = () => {
+    return (
+      <Tooltip title='Public items are visible to anyone with an account. Private items can only be seen by you'>
+        <Info />
+      </Tooltip>
+    );
   };
 
   return (
@@ -29,8 +48,17 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
       initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={itemSchema}
+      enableReinitialize
     >
-      {({ dirty, resetForm }) => (
+      {({
+          dirty,
+          errors,
+          handleBlur,
+          handleChange,
+          resetForm,
+          touched,
+          values,
+      }) => (
         <Form>
           <StyledForm paperStyle={{ paddingTop: 3, paddingBottom: 3, width: '50%', marginTop: '10%' }}>
             <Grid item>
@@ -55,6 +83,25 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
                 placeholder="Add some extra information about your item here"
                 component={ValidatedTextField}
               />
+            </Grid>
+            <Grid item sx={gridItemStyling}>
+              <FormControl required fullWidth sx={{ maxWidth: '75%', justifySelf: 'center' }}>
+                <InputLabel id="privacy-status-selector-label">Visibility</InputLabel>
+                <Select
+                  name="privacyStatus"
+                  labelId="privacy-status-selector-label"
+                  label="Visibility"
+                  startAdornment={PrivacyTooltip()}
+                  value={values.privacyStatus}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(errors.privacyStatus) && Boolean(touched.privacyStatus)}
+                  fullWidth
+                >
+                  <MenuItem value={'PUBLIC'}>Public</MenuItem>
+                  <MenuItem value={'PRIVATE'}>Private</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item sx={gridItemStyling}>
               <Field

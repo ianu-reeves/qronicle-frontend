@@ -8,7 +8,7 @@ import {Home, MeetingRoom, Person, Queue} from "@mui/icons-material";
 import DrawerItem from "./DrawerItem";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 
 export default function PrimaryAppBar() {
   const { currentUser } = useAuth();
@@ -17,13 +17,13 @@ export default function PrimaryAppBar() {
   const [open, setOpen] = React.useState(false);
   const username = currentUser?.username;
 
+  // TODO: sort out issue where access/ refresh cookies are not sent after access token expires
   const handleSignOut = () => {
     axiosPrivate
       .post('/auth/signout', null, { withCredentials: true })
       .then(result => {
         if (result.status === 204) {
           toast.success('Signed out successfully');
-          localStorage.clear();
           navigate('/login');
         } else {
           toast.error('An error occurred. Please try again');
@@ -39,19 +39,19 @@ export default function PrimaryAppBar() {
           <MenuIcon />
         </IconButton>
         <Box flexGrow='1'>
-          <Link
-            color="inherit"
-            href='/'
-            variant='h4'
-            underline='none'
+          <NavLink
+            to='/'
+            style={{ fontSize: '35px', textDecoration: 'none', color: 'white' }}
           >
             QRonicle
-          </Link>
+          </NavLink>
         </Box>
         <SearchBar placeholder="Search items" />
         {Object.keys(currentUser).length > 0
           ? <Typography variant="body2">
-              Hello, <Link href={`/profile/${username}`} underline='none' color='inherit'>{username}</Link>
+            Hello, <NavLink to={`/profile/${username}`} style={{ textDecoration: 'none', color: 'white' }}>
+              {username}
+            </NavLink>
             </Typography>
           : <Button variant="outline" href='/login'>Log in</Button>
         }

@@ -26,7 +26,6 @@ export default function Register() {
   const { setCurrentUser } = useAuth();
 
   const onSubmit = async (values, { setFieldError, resetForm }) => {
-    console.log(values);
     await axios
       .post("/auth/register", values, { withCredentials: true })
       .then(result => {
@@ -37,7 +36,6 @@ export default function Register() {
       })
       .catch((e) => {
         if (e.response.status === 409) {
-          console.log('409 DETECTED')
           setFieldError('username', 'That username is not available. Please try another one');
         }
         toast.error("Please check the form & try again");

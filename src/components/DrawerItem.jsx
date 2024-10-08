@@ -1,18 +1,22 @@
 import {ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {NavLink} from "react-router-dom";
+import UndecoratedNavLink from "./UndecoratedNavLink";
 
 const DrawerItem = ({ icon, label, href, onClick }) => {
 
   return (
-    <ListItem key={`drawer-item-${label}`}>
-      <ListItemButton href={href} onClick={onClick}>
-        <ListItemIcon>
-          {icon}
-        </ListItemIcon>
-        <ListItemText>
-          {label}
-        </ListItemText>
-      </ListItemButton>
-    </ListItem>
+    <UndecoratedNavLink to={href} color='black'>
+      <ListItem key={`drawer-item-${label}`}>
+        <ListItemButton onClick={onClick}>
+          <ListItemIcon>
+            {icon}
+          </ListItemIcon>
+          <ListItemText>
+            {label}
+          </ListItemText>
+        </ListItemButton>
+      </ListItem>
+    </UndecoratedNavLink>
   );
 };
 

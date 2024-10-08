@@ -61,9 +61,7 @@ export default function Login() {
       navigate("/", { replace: true });
     })
     .catch((e) => {
-      console.log(e)
       if (e.response?.data?.status === 401) {
-        console.log('401 detected')
         setError(e.response.data.message);
       } else {
         setError("There was an error signing in. Please try again")

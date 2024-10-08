@@ -10,6 +10,7 @@ import ItemPage from "./containers/ItemPage";
 import EditItem from "./containers/EditItem";
 import ProfilePage from "./containers/ProfilePage";
 import EditProfilePage from "./containers/EditProfilePage";
+import ChangePassword from "./containers/ChangePassword";
 
 export default function Router() {
   return (
@@ -25,6 +26,7 @@ export default function Router() {
         <Route path="profile">
           <Route path=":username" element={<ProfilePage />} />
           <Route path="edit" element={<EditProfilePage />} />
+          <Route path="changePassword" element={<ChangePassword />} />
         </Route>
         <Route path="items">
           <Route path="create" element={<CreateItem />} />
