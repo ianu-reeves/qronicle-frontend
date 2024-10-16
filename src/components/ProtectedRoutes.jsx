@@ -3,9 +3,8 @@ import React, {useEffect} from "react";
 import useAuth from "../hooks/useAuth";
 import useRefresh from "../hooks/useRefresh";
 import {CircularProgress, Typography} from "@mui/material";
+import Unverified from "../containers/Unverified";
 
-//FIXME currently not storing credentials in context between reloads, but repopulates when access token expires
-// and refresh hook fires. Properly redirects to login page if refresh token is expired when attempting this
 export default function ProtectedRoutes() {
   const { currentUser, persistLogin } = useAuth();
   const [loading, setLoading] = React.useState(true);
@@ -16,7 +15,7 @@ export default function ProtectedRoutes() {
 
   useEffect(() => {
     let isMounted = true;
-    const refreshSession = async () => {
+    const attemptRefresh = async () => {
       try {
         await refresh();
       } catch {
@@ -25,7 +24,7 @@ export default function ProtectedRoutes() {
         isMounted && setLoading(false);
       }
     }
-    !hasAuth() && persistLogin ? refreshSession() : setLoading(false);
+    !hasAuth() && persistLogin ? attemptRefresh() : setLoading(false);
 
     return () => {
       isMounted = false
@@ -34,17 +33,16 @@ export default function ProtectedRoutes() {
 
   return (
     <>
-      {
-        !persistLogin
-          ? <Outlet />
-          : loading
-            ? (
-              <>
-                <CircularProgress />
-                <Typography>Loading... Please wait</Typography>
-              </>
-            )
-            : <Outlet />
+      {loading
+          ? (
+            <>
+              <CircularProgress />
+              <Typography>Loading... Please wait</Typography>
+            </>
+          )
+          : currentUser.verified
+            ? <Outlet />
+            : <Unverified />
       }
     </>
   )

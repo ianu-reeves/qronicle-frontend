@@ -14,6 +14,13 @@ export default function EditProfilePage() {
   const classes = useGlobalTheme();
   const axiosPrivate = useAxiosPrivate();
 
+  const initialValues = {
+    firstName: currentUser ? currentUser.firstName : '',
+    lastName: currentUser ? currentUser.lastName : '',
+    bio: currentUser ? currentUser.bio : '',
+    privacyStatus: currentUser ? currentUser.privacyStatus : ''
+  }
+
   const handleSubmit = (values, { resetForm }) => {
     axiosPrivate
       .put('/api/v1/users', values, { withCredentials: true })
@@ -28,7 +35,7 @@ export default function EditProfilePage() {
 
   return (
     <Formik
-      initialValues={{...currentUser}}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       enableReinitialize
     >

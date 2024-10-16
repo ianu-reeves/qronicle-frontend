@@ -11,19 +11,20 @@ import {toast} from "react-toastify";
 import {NavLink, useNavigate} from "react-router-dom";
 
 export default function PrimaryAppBar() {
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const username = currentUser?.username;
+  const currentUserExists = Object.keys(currentUser).length > 0;
 
-  // TODO: sort out issue where access/ refresh cookies are not sent after access token expires
   const handleSignOut = () => {
     axiosPrivate
       .post('/auth/signout', null, { withCredentials: true })
       .then(result => {
         if (result.status === 204) {
           toast.success('Signed out successfully');
+          setCurrentUser({});
           navigate('/login');
         } else {
           toast.error('An error occurred. Please try again');
@@ -35,9 +36,11 @@ export default function PrimaryAppBar() {
   return (
     <AppBar position='sticky'>
       <Toolbar sx={{ justifyContent: 'center' }}>
-        <IconButton onClick={() => setOpen(!open)}>
-          <MenuIcon />
-        </IconButton>
+        {currentUserExists &&
+          <IconButton onClick={() => setOpen(!open)}>
+            <MenuIcon />
+          </IconButton>
+        }
         <Box flexGrow='1'>
           <NavLink
             to='/'
@@ -47,7 +50,7 @@ export default function PrimaryAppBar() {
           </NavLink>
         </Box>
         <SearchBar placeholder="Search items" />
-        {Object.keys(currentUser).length > 0
+        {currentUserExists
           ? <Typography variant="body2">
             Hello, <NavLink to={`/profile/${username}`} style={{ textDecoration: 'none', color: 'white' }}>
               {username}
@@ -56,7 +59,7 @@ export default function PrimaryAppBar() {
           : <Button variant="outline" href='/login'>Log in</Button>
         }
       </Toolbar>
-      {currentUser &&
+      {currentUserExists &&
         <Drawer open={open} onClose={() => setOpen(false)}>
           <Box sx={{ width: 250 }}>
             <List>

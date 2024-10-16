@@ -67,8 +67,7 @@ export default function ItemCard({ itemProperties, onClickImage }) {
           }
           <Typography color="grey" variant="body2" sx={{ padding: 0.5 }}>
             Uploaded by <UndecoratedNavLink to={`/profile/${itemProperties.owner.username}`}>{itemProperties.owner.username}
-              </UndecoratedNavLink>
-            on {convertDateWithBreaksUS(itemProperties.uploadDate)}
+              </UndecoratedNavLink> on {convertDateWithBreaksUS(itemProperties.uploadDate)}
           </Typography>
           <Typography variant="body1">
             {itemProperties.description}

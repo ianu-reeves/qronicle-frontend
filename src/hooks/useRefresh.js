@@ -14,7 +14,7 @@ export default function useRefresh() {
       setCurrentUser(result.data.userDetails)
     })
     // clear user context & redirect to login page with error
-    .catch((err) => {
+    .catch(() => {
       setCurrentUser({});
       //TODO: set up error context & add error to it here for display on login page
       navigate('/login');

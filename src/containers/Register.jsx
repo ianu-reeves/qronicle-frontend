@@ -180,7 +180,7 @@ export default function Register() {
                 component={ValidatedTextField}
               />
             </Grid>
-            <Grid item sx={{marginTop: 5}}>
+            <Grid item sx={{ marginTop: 2, marginBottom: 2 }}>
               <Button type="submit" variant="contained">
                 Sign me up!
               </Button>
