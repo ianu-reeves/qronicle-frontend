@@ -3,7 +3,7 @@ import {Button, Card, CardContent, CardMedia, Grid, Link, Typography} from "@mui
 import TagContainer from "./TagContainer";
 import Carousel from "react-material-ui-carousel";
 import useAuth from "../hooks/useAuth";
-import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/formatUtils";
+import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/utils";
 import {NavLink} from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
 

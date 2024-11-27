@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Alert, Button, Grid, InputAdornment, Paper, TextField, Typography} from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
@@ -7,12 +7,18 @@ import StyledForm from "../components/StyledForm";
 import ValidatedTextField from "../components/ValidatedTextField";
 import {Field, Form, Formik} from "formik";
 import {verificationCodeSchema} from "../validation/verificationCodeSchema";
+import useAuth from "../hooks/useAuth";
 
 export default function Unverified() {
   const axios = useAxiosPrivate();
+  const { currentUser, setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = React.useState('');
   const [awaitingSubmission, setAwaitingSubmission] = React.useState(false);
+
+  useEffect(() => {
+    (currentUser.verified || !(Object.keys(currentUser).length > 0)) && navigate('/');
+  }, []);
 
   const handleClickResend = () => {
     setAwaitingSubmission(true);
@@ -34,20 +40,23 @@ export default function Unverified() {
       });
   };
 
-  const handleClickVerify = (values) => {
+  const handleClickVerify = (values, { resetForm }) => {
     axios
       .post(
         `/auth/verifyRegistration`,
-        values,
+        { verificationCode: values.verificationCode.toUpperCase() },
         {withCredentials: true}
       )
-      .then(() => {
+      .then((result) => {
+        console.log(result)
         toast.success("Your account was successfully verified");
+        setCurrentUser(result.data.userDetails);
+        navigate('/');
       })
       .catch(e => {
         setError(e.response.data)
-      });
-
+      })
+      .finally(() => resetForm());
   };
 //TODO: verify code is valid
   return (
@@ -87,7 +96,7 @@ export default function Unverified() {
             </Grid>
             <Grid item>
               <Typography variant='h5'>
-                Enter your verification code in the box below
+                Enter your 6 digit verification code in the box below
               </Typography>
             </Grid>
             {error &&
@@ -115,7 +124,7 @@ export default function Unverified() {
                       </Button>
                     </InputAdornment>
                 )}}
-                inputProps={{ maxLength: 33 }}
+                inputProps={{ maxLength: 6 }}
                 component={ValidatedTextField}
               />
             </Grid>

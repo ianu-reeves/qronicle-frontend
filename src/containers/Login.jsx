@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
+import * as yup from 'yup';
 import {
   Alert,
   Button,
-  Checkbox,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Divider,
-  FormControlLabel,
-  Grid,
+  Grid, Link,
   Paper,
   TextField,
   Typography
@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LinkedLogoButton from "../components/LinkedLogoButton";
 import {toast} from "react-toastify";
+import {Field, Form, Formik} from "formik";
+import ValidatedTextField from "../components/ValidatedTextField";
 
 const LOGIN_URL = '/auth/login'
 const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
@@ -25,7 +27,9 @@ export default function Login() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
-  const { setCurrentUser, persistLogin, setPersistLogin } = useAuth();
+  const [showResetWindow, setShowResetWindow] = React.useState(false);
+  const [dialogContent, setDialogContent] = React.useState(<></>);
+  const { setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const AVATAR_SIZE = 24;
 
@@ -33,15 +37,6 @@ export default function Login() {
     setUsername('');
     setPassword('');
   };
-
-  const togglePersistLogin = () => {
-    setPersistLogin(!persistLogin)
-  };
-
-  // TODO: remove need to have this cookie present
-  useEffect(() => {
-    localStorage.setItem("persist", persistLogin);
-  }, [persistLogin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,6 +62,81 @@ export default function Login() {
         setError("There was an error signing in. Please try again")
       }
     });
+  };
+
+  const handleSubmitResetRequest = (values, { resetForm }) => {
+    const successDialogContent = (<>
+      <DialogTitle>
+        Success!
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          If an account with that email address exists, you will receive an email shortly with instructions
+          on how to reset your password.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant='contained'
+          onClick={() => setShowResetWindow(false)}
+        >
+          Okay
+        </Button>
+      </DialogActions>
+    </>);
+
+    setDialogContent(successDialogContent);
+
+    axios
+      .post('/api/v1/users/requestPasswordReset', values)
+      .catch(() => toast.error("There was an issue with your request. Please try again"));
+  };
+
+  const handleOpenDialog = () => {
+    setShowResetWindow(true);
+    setDialogContent(
+      <Formik
+        initialValues={{
+          emailAddress: '',
+        }}
+        onSubmit={handleSubmitResetRequest}
+        validationSchema={yup.object().shape({
+          emailAddress: yup
+            .string().trim()
+            .email('Please enter a valid email address')
+            .required('You must enter an email address')
+        })}
+      >
+        {() => (
+          <Form>
+            <DialogTitle>
+              Reset your password
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                If you have forgotten your password, please enter your email address below to receive a link to reset it.
+              </DialogContentText>
+            <Field
+              fullWidth
+              autoFocus
+              name='emailAddress'
+              required
+              component={ValidatedTextField}
+              sx={{ marginTop: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowResetWindow(false)}>
+              Cancel
+            </Button>
+            <Button type='submit' variant='contained'>
+              Send Reset Email
+            </Button>
+          </DialogActions>
+        </Form>
+      )}
+      </Formik>
+    );
   };
 
   return (
@@ -103,16 +173,16 @@ export default function Login() {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </Grid>
-              <Grid item sx={{ padding: 1 }}>
-                <TextField
-                  fullWidth
-                  type="password"
-                  required
-                  label="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Grid>
-            <Grid item sx={{ padding: 1, marginBottom: 2 }}>
+            <Grid item sx={{ padding: 1 }}>
+              <TextField
+                fullWidth
+                type="password"
+                required
+                label="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+            <Grid item sx={{ padding: 1 }}>
               <Button
                 variant="contained"
                 type="submit"
@@ -120,12 +190,12 @@ export default function Login() {
                 Log in
               </Button>
             </Grid>
-            <Grid item>
-              <FormControlLabel
-                control={<Checkbox onChange={togglePersistLogin}
-                                   checked={persistLogin} />}
-                label="Keep me logged in"
-              />
+            <Grid item sx={{ padding: 1, marginBottom: 2 }}>
+              <Typography variant='subtitle2'>
+                <Link sx={{ textDecoration: 'none', cursor: 'pointer' }} onClick={handleOpenDialog}>
+                  Forgot your password?
+                </Link>
+              </Typography>
             </Grid>
           </form>
           <Divider sx={{ marginBottom: 2 }}>
@@ -158,11 +228,18 @@ export default function Login() {
               href="/register"
               sx={{ marginTop: 2 }}
             >
-              Register
+              Register Now
             </Button>
           </Grid>
         </Paper>
       </Grid>
+
+      <Dialog
+        open={showResetWindow}
+        onClose={() => setShowResetWindow(false)}
+      >
+        {dialogContent}
+      </Dialog>
     </>
   );
 };

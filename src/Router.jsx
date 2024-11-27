@@ -11,6 +11,8 @@ import EditItem from "./containers/EditItem";
 import ProfilePage from "./containers/ProfilePage";
 import EditProfilePage from "./containers/EditProfilePage";
 import ChangePassword from "./containers/ChangePassword";
+import Unverified from "./containers/Unverified";
+import ResetPassword from "./containers/ResetPassword";
 
 export default function Router() {
   return (
@@ -18,6 +20,8 @@ export default function Router() {
       {/* PUBLIC ROUTES */}
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
+      <Route path='unverified' element={<Unverified />} />
+      <Route path='resetPassword' element={<ResetPassword />} />
 
       {/* PROTECTED ROUTES */}
       <Route element={<ProtectedRoutes />}>

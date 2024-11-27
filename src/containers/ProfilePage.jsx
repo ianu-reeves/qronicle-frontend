@@ -6,7 +6,7 @@ import ItemGrid from "../components/ItemGrid";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import {Edit} from "@mui/icons-material";
-import {convertDateWithLongMonth} from "../util/formatUtils";
+import {convertDateWithLongMonth} from "../util/utils";
 
 export default function ProfilePage() {
   const { username } = useParams();

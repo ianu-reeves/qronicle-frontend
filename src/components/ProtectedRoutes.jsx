@@ -1,9 +1,8 @@
-import { Outlet } from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import React, {useEffect} from "react";
 import useAuth from "../hooks/useAuth";
 import useRefresh from "../hooks/useRefresh";
 import {CircularProgress, Typography} from "@mui/material";
-import Unverified from "../containers/Unverified";
 
 export default function ProtectedRoutes() {
   const { currentUser, persistLogin } = useAuth();
@@ -42,7 +41,7 @@ export default function ProtectedRoutes() {
           )
           : currentUser.verified
             ? <Outlet />
-            : <Unverified />
+            : <Navigate to='/unverified' />
       }
     </>
   )
