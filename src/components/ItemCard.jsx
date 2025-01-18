@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button, Card, CardContent, CardMedia, Grid, Link, Typography} from "@mui/material";
-import TagContainer from "./TagContainer";
+import { Button, Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import useAuth from "../hooks/useAuth";
-import {convertDateWithBreaksUS, convertDateWithLongMonth} from "../util/utils";
-import {NavLink} from "react-router-dom";
+import { convertDateWithBreaksUS } from "../util/utils";
+import { NavLink } from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
+import Tag from "./Tag";
 
 export default function ItemCard({ itemProperties, onClickImage }) {
   const images = itemProperties.images;
@@ -72,7 +72,15 @@ export default function ItemCard({ itemProperties, onClickImage }) {
           <Typography variant="body1">
             {itemProperties.description}
           </Typography>
-          <TagContainer tags={itemProperties.tags} />
+          <Grid marginTop={1} container>
+            {itemProperties.tags?.map(tag =>
+              <Tag
+                key={tag.description}
+                tag={tag}
+                handleChipClick={() => console.log(tag.description)}
+              />
+            )}
+          </Grid>
         </CardContent>
       </Card>
     </div>

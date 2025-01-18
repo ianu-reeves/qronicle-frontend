@@ -49,7 +49,7 @@ export default function PrimaryAppBar() {
             QRonicle
           </NavLink>
         </Box>
-        <SearchBar placeholder="Search items" />
+        <SearchBar />
         {currentUserExists
           ? <Typography variant="body2">
             Hello, <NavLink to={`/profile/${username}`} style={{ textDecoration: 'none', color: 'white' }}>

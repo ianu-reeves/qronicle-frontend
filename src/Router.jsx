@@ -13,6 +13,7 @@ import EditProfilePage from "./containers/EditProfilePage";
 import ChangePassword from "./containers/ChangePassword";
 import Unverified from "./containers/Unverified";
 import ResetPassword from "./containers/ResetPassword";
+import Search from "./containers/Search";
 
 export default function Router() {
   return (
@@ -34,6 +35,7 @@ export default function Router() {
         </Route>
         <Route path="items">
           <Route path="create" element={<CreateItem />} />
+          <Route path="search" element={<Search />} />
           <Route path=":itemId" element={<ItemPage />} />
           <Route path=":itemId/edit" element={<EditItem />} />
         </Route>

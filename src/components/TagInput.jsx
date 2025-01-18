@@ -7,7 +7,7 @@ import {
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 
-export default function TagInput({ form, field, maxTags }) {
+export default function TagInput({ form, field, maxTags, ...textFieldProps }) {
   const axiosPrivate = useAxiosPrivate();
   const [selected, setSelected] = React.useState(0);
   const [options, setOptions] = React.useState([]);
@@ -44,8 +44,9 @@ export default function TagInput({ form, field, maxTags }) {
       renderInput={(params) => (
         <TextField
           {...params}
+          {...textFieldProps}
           fullWidth
-          sx={{ maxWidth: '75%' }}
+          // sx={{ maxWidth: '75%' }}
           label={`Add tags (max ${maxTags})`}
         />
       )}

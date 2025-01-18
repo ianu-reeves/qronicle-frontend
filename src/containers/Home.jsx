@@ -3,6 +3,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import ItemGrid from "../components/ItemGrid";
 import {Typography} from "@mui/material";
+import EmptyHomePage from "../components/EmptyHomePage";
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -25,6 +26,6 @@ export default function Home() {
 
   return (items.length > 0
       ? <ItemGrid items={items} />
-      : <Typography>You haven't uploaded any items yet. Get started today</Typography>
+      : <EmptyHomePage />
   );
 };

@@ -1,19 +1,16 @@
-import {alpha, InputBase, styled, TextField} from "@mui/material";
+import { alpha, InputBase, styled } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: 5,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   margin: 10,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -23,7 +20,6 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -35,7 +31,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
   },
 }));
+
 export default function SearchBar() {
+  const [value, setValue] = useState('');
+  const navigate = useNavigate();
+
+  const handlePressEnter = (e) => {
+    if (value.trim() !== '') {
+      // TODO: Navigate to search page with value param
+      navigate(`/items/search?term=${value.trim()}`);
+      setValue('');
+      e.target.blur();
+    }
+  };
+
   return (
     <Search>
       <SearchIconWrapper>
@@ -43,7 +52,13 @@ export default function SearchBar() {
       </SearchIconWrapper>
       <StyledInputBase
         placeholder="Search items"
-        inputProps={{ 'aria-label': 'search' }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handlePressEnter(e);
+          }
+        }}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     </Search>
   );
