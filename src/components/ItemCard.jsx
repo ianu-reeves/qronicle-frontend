@@ -1,5 +1,15 @@
-import React from 'react';
-import { Button, Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import React, {useState} from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Dialog, DialogActions,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography
+} from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import useAuth from "../hooks/useAuth";
 import { convertDateWithBreaksUS } from "../util/utils";
@@ -7,8 +17,9 @@ import { NavLink } from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
 import Tag from "./Tag";
 
-export default function ItemCard({ itemProperties, onClickImage }) {
+export default function ItemCard({ itemProperties, onClickImage, onDeleteItem }) {
   const images = itemProperties.images;
+  const [open, setOpen] = useState(false);
   const { currentUser } = useAuth();
   const MEDIA_HEIGHT = 400;
 
@@ -19,8 +30,39 @@ export default function ItemCard({ itemProperties, onClickImage }) {
     }
   }
 
+  const handleDeleteItem = (item) => {
+    onDeleteItem(item);
+    setOpen(false);
+  };
+
   return (
     <div style={{ height: '100%' }}>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+      >
+        <DialogTitle>
+          Delete '{itemProperties.name}'?
+        </DialogTitle>
+        <DialogContentText sx={{ padding: 2 }}>
+          This action cannot be undone. If you choose to delete '{itemProperties.name}', it will be permanently deleted &
+          cannot be recovered. Only proceed if you are sure you want to remove this item & its contents forever.
+        </DialogContentText>
+        <DialogActions>
+          <Button
+            variant='contained'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant='outlined'
+            onClick={handleDeleteItem}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Card id={`item-card-${itemProperties.id}`} sx={{ height: '100%', width: '100%' }}>
         <CardContent id={`item-card-content-${itemProperties.id}`}>
           {<Carousel
@@ -61,9 +103,19 @@ export default function ItemCard({ itemProperties, onClickImage }) {
             </NavLink>
           </Typography>
           {currentUser.username === itemProperties.owner.username &&
-            <NavLink to={`/items/${itemProperties.id}/edit`}>
-              <Button variant="outlined" sx={{ marginTop: 2 }}>Edit item</Button>
-            </NavLink>
+            <>
+              <NavLink to={`/items/${itemProperties.id}/edit`}>
+                <Button variant="outlined" sx={{ marginTop: 2, marginRight: 1 }}>Edit item</Button>
+              </NavLink>
+              <Button
+                variant='outlined'
+                sx={{ marginTop: 2, marginLeft: 1 }}
+                color='error'
+                onClick={() => setOpen(true)}
+              >
+                Delete item
+              </Button>
+            </>
           }
           <Typography color="grey" variant="body2" sx={{ padding: 0.5 }}>
             Uploaded by <UndecoratedNavLink to={`/profile/${itemProperties.owner.username}`}>{itemProperties.owner.username}

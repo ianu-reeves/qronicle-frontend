@@ -1,7 +1,7 @@
 import {Grid} from "@mui/material";
 import ItemCard from "./ItemCard";
 
-export default function ItemGrid({ items }) {
+export default function ItemGrid({ items, onClickImage, onDeleteItem }) {
   // determines width of cards in grid. operates such that rows have max of 3 items each (12/ 4 = 3)
   const getWidth = () => {
     switch (items.length) {
@@ -35,7 +35,11 @@ export default function ItemGrid({ items }) {
             item
             xs={getWidth()}
           >
-            <ItemCard itemProperties={item} />
+            <ItemCard
+              itemProperties={item}
+              onClickImage={onClickImage}
+              onDeleteItem={() => onDeleteItem(item)}
+            />
           </Grid>
         )}
       </Grid>

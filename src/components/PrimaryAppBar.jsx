@@ -1,6 +1,6 @@
 import React from 'react';
 import AppBar from '@mui/material/AppBar';
-import {Box, Button, Drawer, IconButton, Link, List, Toolbar, Typography} from "@mui/material";
+import {Box, Button, Drawer, IconButton, List, Toolbar, Typography} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import useAuth from "../hooks/useAuth";
 import SearchBar from "./SearchBar";
@@ -19,6 +19,7 @@ export default function PrimaryAppBar() {
   const currentUserExists = Object.keys(currentUser).length > 0;
 
   const handleSignOut = () => {
+    setOpen(false);
     axiosPrivate
       .post('/auth/signout', null, { withCredentials: true })
       .then(result => {
@@ -63,9 +64,9 @@ export default function PrimaryAppBar() {
         <Drawer open={open} onClose={() => setOpen(false)}>
           <Box sx={{ width: 250 }}>
             <List>
-              <DrawerItem icon={<Home />} label='Home' href='/' />
-              <DrawerItem icon={<Queue />} label='Add New Item' href='/items/create' />
-              <DrawerItem icon={<Person />} label='My Profile' href={`/profile/${currentUser?.username}`} />
+              <DrawerItem icon={<Home />} label='Home' href='/' onClick={() => setOpen(false)} />
+              <DrawerItem icon={<Queue />} label='Add New Item' href='/items/create' onClick={() => setOpen(false)} />
+              <DrawerItem icon={<Person />} label='My Profile' href={`/profile/${currentUser?.username}`} onClick={() => setOpen(false)} />
               <DrawerItem icon={<MeetingRoom />} label='Sign Out' onClick={handleSignOut} />
             </List>
           </Box>

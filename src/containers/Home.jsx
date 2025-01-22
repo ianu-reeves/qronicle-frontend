@@ -2,16 +2,26 @@ import { useEffect, useState } from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import ItemGrid from "../components/ItemGrid";
-import {Typography} from "@mui/material";
 import EmptyHomePage from "../components/EmptyHomePage";
+import {toast} from "react-toastify";
 
 export default function Home() {
   const [items, setItems] = useState([]);
   const { currentUser } = useAuth();
-  const axiosPrivate = useAxiosPrivate();
+  const axios = useAxiosPrivate();
+
+  const handleDeleteItem = (item) => {
+    axios
+      .delete(`/api/v1/items/${item.id}`,{ withCredentials: true })
+      .then(() => {
+        setItems(items.filter(i => i.id !== item.id));
+        toast.success('Item deleted!');
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
-    axiosPrivate
+    axios
       .get(`http://localhost:8080/api/v1/items/user/${currentUser?.username}`,
         {
           withCredentials: true,
@@ -21,11 +31,11 @@ export default function Home() {
       })
       .catch(() => {});
     },
-  [currentUser?.username, axiosPrivate]
+  [currentUser?.username, axios]
   );
 
   return (items.length > 0
-      ? <ItemGrid items={items} />
-      : <EmptyHomePage />
+    ? <ItemGrid items={items} onDeleteItem={handleDeleteItem} />
+    : <EmptyHomePage />
   );
 };

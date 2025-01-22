@@ -32,7 +32,7 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
     description: item ? item.description : '',
     tags: item ? item.tags.map(tag => tag.description) : [],
     images: item ? item.images : [],
-    privacyStatus: item ? item.privacyStatus : '',
+    privacyStatus: item ? item.privacyStatus : 'PUBLIC',
   };
 
   const PrivacyTooltip = () => {
@@ -51,13 +51,13 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
       enableReinitialize
     >
       {({
-          dirty,
-          errors,
-          handleBlur,
-          handleChange,
-          resetForm,
-          touched,
-          values,
+        dirty,
+        errors,
+        handleBlur,
+        handleChange,
+        resetForm,
+        touched,
+        values,
       }) => (
         <Form>
           <StyledForm paperStyle={{ paddingTop: 3, paddingBottom: 3, width: '50%', marginTop: '10%' }}>
@@ -103,7 +103,7 @@ export default function ItemForm({ handleSubmit, handleFileDrop, item }) {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item sx={gridItemStyling}>
+            <Grid item sx={{ width: '75%' }}>
               <Field
                 name="tags"
                 component={TagInput}

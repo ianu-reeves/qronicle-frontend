@@ -1,5 +1,4 @@
 import {ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import {NavLink} from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
 
 const DrawerItem = ({ icon, label, href, onClick }) => {

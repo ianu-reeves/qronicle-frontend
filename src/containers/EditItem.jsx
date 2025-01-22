@@ -51,9 +51,7 @@ export default function EditItem() {
     setDialogOpen(false);
   };
 
-  const handleUpload = (e) => {
-    const filesToAdd = Array.from(e.target.files);
-    console.log(e)
+  const uploadFiles = (filesToAdd) => {
     filesToAdd.forEach((file, index) => {
       if (file.size > MAX_FILE_SIZE) {
         filesToAdd.splice(index, 1);
@@ -67,19 +65,15 @@ export default function EditItem() {
     setFiles([...files, ...filesToAdd]);
   };
 
+  const handleUpload = (e) => {
+    const filesToAdd = Array.from(e.target.files);
+    uploadFiles(filesToAdd);
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const filesToAdd = Array.from(e.dataTransfer.files);
-    filesToAdd.forEach((file, index) => {
-      if (file.size > MAX_FILE_SIZE) {
-        filesToAdd.splice(index, 1);
-        return toast.error(`Failed to upload ${file.name}\nFiles cannot be larger than ${MAX_FILE_SIZE/ 1048576} MB`);
-      }
-    });
-    if (filesToAdd.length + images.length + files.length > MAX_IMAGES) {
-      return toast.error(`Items cannot have more than ${MAX_IMAGES} images each.`);
-    }
-    setFiles([...files, ...filesToAdd]);
+    uploadFiles(filesToAdd);
   };
 
   const handleClick = () => {
@@ -87,7 +81,6 @@ export default function EditItem() {
   };
 
   const handleUpdateDetails = async (values, { resetForm }) => {
-    console.log('inside updater')
     axiosPrivate
       .put('/api/v1/items', values, { withCredentials: true })
       .then((result) => {
@@ -102,7 +95,7 @@ export default function EditItem() {
     const form = new FormData();
     form.append("item", new Blob([JSON.stringify(item)], { type: 'application/json' }));
     files.forEach((image) => form.append('files', image));
-    console.log(form)
+
     await axiosPrivate
       .post(`/api/v1/items/${item.id}/images`, form, {
         withCredentials: true,
@@ -126,6 +119,7 @@ export default function EditItem() {
   };
 
   const handleDeleteImage = async (image) => {
+    console.log('HELLO')
     await axiosPrivate
       .delete(`/api/v1/items/${item.id}/images/${image.id}`,{ withCredentials: true })
       .then(result => {

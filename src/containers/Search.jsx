@@ -45,10 +45,9 @@ const bindPageSize = (value) => {
 // Restricts value of sort method parameter to one of allowed values
 const bindSortMethod = (value) => {
   if (
-    value === 'date_desc'
-    || value === 'date_asc'
+    value === 'date_asc'
     || value === 'name_desc'
-    || value === 'date_desc'
+    || value === 'name_asc'
   ) {
     return value;
   }
@@ -97,7 +96,6 @@ export default function Search() {
     }
   }, [page]);
 
-  // TODO: modify so generated url can be used to navigate to front page address as well
   const getSearchParamString = (values) => {
     let url = '';
     if (values.searchTerm) {
@@ -118,7 +116,9 @@ export default function Search() {
       return;
     }
     setPage(1);
-    const url = SEARCH_ENDPOINT_PREFIX + getSearchParamString(values);
+    const searchParamString = getSearchParamString(values);
+    setSearchUrl(`${getPublicURL()}/items/search?${searchParamString}`);
+    const url = SEARCH_ENDPOINT_PREFIX + searchParamString;
     axios
       .get(url)
       .then(res => {
@@ -127,7 +127,7 @@ export default function Search() {
       })
       .catch(e => console.log(e));
   };
-  console.log(searchUrl)
+
   return (
     <Formik
       initialValues={{
@@ -251,7 +251,7 @@ export default function Search() {
                 <Typography variant='subtitle1'>
                   Displaying results {pageSize * (page - 1) + 1}-{pageSize * page <= resultCount? pageSize * page : resultCount} of {resultCount} total results
                 </Typography>
-                <ItemGrid items={items}/>
+                <ItemGrid items={items} />
               </>)
               : <Grid item>
                 <Typography>

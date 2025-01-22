@@ -55,4 +55,4 @@ export const sortItems = (sortMethod) => {
     default:
       return '';
   }
-}
+};

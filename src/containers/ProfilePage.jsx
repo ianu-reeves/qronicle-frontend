@@ -7,19 +7,20 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import {Edit} from "@mui/icons-material";
 import {convertDateWithLongMonth} from "../util/utils";
+import {toast} from "react-toastify";
 
 export default function ProfilePage() {
   const { username } = useParams();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const axiosPrivate = useAxiosPrivate();
+  const axios = useAxiosPrivate();
   const [user, setUser] = React.useState(null);
   const [items, setItems] = React.useState([]);
   const [loadedItems, setLoadedItems] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
-    axiosPrivate
+    axios
       .get(`api/v1/users/${username}`, { withCredentials: true })
       .then(data => {
         setUser(data.data);
@@ -32,8 +33,18 @@ export default function ProfilePage() {
       });
   }, [username]);
 
+  const handleDeleteItem = (item) => {
+    axios
+      .delete(`/api/v1/items/${item.id}`,{ withCredentials: true })
+      .then(() => {
+        setItems(items.filter(i => i.id !== item.id));
+        toast.success('Item deleted!');
+      })
+      .catch(() => {});
+  };
+
   const loadItems = () => {
-    axiosPrivate
+    axios
       .get(`/api/v1/items/user/${username}`, { withCredentials: true })
       .then(results => {
         setItems(results.data);
@@ -80,7 +91,7 @@ export default function ProfilePage() {
         </Grid>
         <Grid item sx={{marginBottom: 2}}>
           {items.length > 0
-            ? <ItemGrid items={items}/>
+            ? <ItemGrid items={items} onDeleteItem={handleDeleteItem} />
             : loadedItems
               ? <Typography variant='h5'>
                 This user has not uploaded any items yet.

@@ -23,12 +23,16 @@ export default function CreateItem() {
           'Content-Type': 'multipart/form-data'
         }
       })
-      .then((result) => {
-        resetForm();
-        toast("Item added!");
-        navigate("/", { replace: true });
+      .then((res) => {
+        if (res.status === 201) {
+          resetForm();
+          toast.success("Item added!");
+          navigate("/", {replace: true});
+        }
       })
-      .catch((e) => {console.log(e)});
+      .catch(() => {
+        toast.error('There was an issue processing your request. Please check the form for errors or try again later');
+      });
   };
 
   const handleFileDrop = (e) => {

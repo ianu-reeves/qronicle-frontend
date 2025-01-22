@@ -30,7 +30,7 @@ export default function EditProfilePage() {
         toast.success('Profile updated successfully!')
       })
       .catch(() => {
-        console.log('error')});
+      });
   };
 
   return (

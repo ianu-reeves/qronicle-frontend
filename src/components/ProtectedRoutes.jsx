@@ -18,7 +18,6 @@ export default function ProtectedRoutes() {
       try {
         await refresh();
       } catch {
-        console.log('Could not refresh');
       } finally {
         isMounted && setLoading(false);
       }
