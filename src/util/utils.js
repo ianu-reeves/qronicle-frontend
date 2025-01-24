@@ -10,7 +10,7 @@ export const convertDateWithBreaksUS = (date) => {
 };
 
 export const getPublicURL = () => {
-  return 'localhost:3000'
+  return 'https://qronicle.netlify.app'
 };
 
 export const sortItems = (sortMethod) => {
