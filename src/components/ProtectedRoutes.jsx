@@ -5,7 +5,7 @@ import useRefresh from "../hooks/useRefresh";
 import {CircularProgress, Typography} from "@mui/material";
 
 export default function ProtectedRoutes() {
-  const { currentUser, persistLogin } = useAuth();
+  const { currentUser } = useAuth();
   const [loading, setLoading] = React.useState(true);
   const refresh = useRefresh();
   const hasAuth = () => {
@@ -22,12 +22,12 @@ export default function ProtectedRoutes() {
         isMounted && setLoading(false);
       }
     }
-    !hasAuth() && persistLogin ? attemptRefresh() : setLoading(false);
+    !hasAuth() ? attemptRefresh() : setLoading(false);
 
     return () => {
       isMounted = false
     };
-  }, [refresh, currentUser, persistLogin, setLoading]);
+  }, [refresh, currentUser, setLoading]);
 
   return (
     <>

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import GOOGLE_LOGO from '../images/google-logo.png';
 import GITHUB_LOGO from '../images/github-mark.png';
-import axios from "../api/axios"
+import axios from "axios"
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LinkedLogoButton from "../components/LinkedLogoButton";
@@ -20,7 +20,7 @@ import {toast} from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
 
-const LOGIN_URL = 'https://52.42.122.118:8080/QRonicle-1.4-DEPLOY/auth/login'
+const LOGIN_URL = 'http://52.42.122.118:8080/QRonicle-1.4-DEPLOY/auth/login'
 const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
 
 export default function Login() {
@@ -59,6 +59,7 @@ export default function Login() {
       if (e.response?.data?.status === 401) {
         setError(e.response.data.message);
       } else {
+        console.log('ERROR: ', e)
         setError("There was an error signing in. Please try again")
       }
     });
