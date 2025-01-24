@@ -22,7 +22,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/v1/items/user/${currentUser?.username}`,
+      .get(`/api/v1/items/user/${currentUser?.username}`,
         {
           withCredentials: true,
         })
