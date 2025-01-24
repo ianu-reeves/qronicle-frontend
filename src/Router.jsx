@@ -3,7 +3,6 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import Home from "./containers/Home";
 import Login from "./containers/Login";
 import ProtectedRoutes from "./components/ProtectedRoutes";
-import Test from "./containers/Test";
 import Register from "./containers/Register";
 import CreateItem from "./containers/CreateItem";
 import ItemPage from "./containers/ItemPage";
@@ -27,7 +26,6 @@ export default function Router() {
       {/* PROTECTED ROUTES */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/" element={<Home />} />
-        <Route path="test" element={<Test />} />
         <Route path="profile">
           <Route path=":username" element={<ProfilePage />} />
           <Route path="edit" element={<EditProfilePage />} />
