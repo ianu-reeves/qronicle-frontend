@@ -20,7 +20,7 @@ import {toast} from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
 
-const LOGIN_URL = '/auth/login'
+const LOGIN_URL = '52.42.122.118:8080/QRonicle-1.4-DEPLOY/auth/login'
 const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
 
 export default function Login() {
