@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'https://18.237.89.92:8443/QRonicle-1.4-DEPLOY/';
+const BASE_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/`;
 
 export default axios.create({
   baseURL: BASE_URL,

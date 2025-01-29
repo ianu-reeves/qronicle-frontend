@@ -20,7 +20,8 @@ import {toast} from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
 
-const LOGIN_URL = 'https://18.237.89.92:8443/QRonicle-1.4-DEPLOY/auth/login'
+console.log(`ENV VARIABLE: ${process.env.REACT_APP_BACKEND_ROOT_URL}`)
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/login`
 const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
 
 export default function Login() {
