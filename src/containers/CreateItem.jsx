@@ -10,7 +10,7 @@ export default function CreateItem() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
-  const handleSubmit = async (values, { setFieldError, resetForm }) => {
+  const handleSubmit = async (values, { resetForm }) => {
     const form = new FormData();
     const itemForm = { name: values.name, description: values.description, tags: values.tags }
     form.append("itemForm", new Blob([JSON.stringify(itemForm)], { type: 'application/json' }))
@@ -18,7 +18,6 @@ export default function CreateItem() {
 
     await axiosPrivate
       .post('/api/v1/items', form, {
-        withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'
         }

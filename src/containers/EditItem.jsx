@@ -33,13 +33,13 @@ export default function EditItem() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/api/v1/items/${itemId}`, { withCredentials: true })
+      .get(`/api/v1/items/${itemId}`)
       .then(results => {
         setItem(results.data);
         setImages(results.data.images);
         setLoading(false);
       })
-      .catch(() => {console.log('error')})
+      .catch(() => {})
   }, [axiosPrivate, itemId]);
 
   const handleOpenDialog = () => {
@@ -82,7 +82,7 @@ export default function EditItem() {
 
   const handleUpdateDetails = async (values, { resetForm }) => {
     axiosPrivate
-      .put('/api/v1/items', values, { withCredentials: true })
+      .put('/api/v1/items', values)
       .then((result) => {
         setItem(result.data);
         resetForm();
@@ -98,7 +98,6 @@ export default function EditItem() {
 
     await axiosPrivate
       .post(`/api/v1/items/${item.id}/images`, form, {
-        withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
         }
@@ -119,9 +118,8 @@ export default function EditItem() {
   };
 
   const handleDeleteImage = async (image) => {
-    console.log('HELLO')
     await axiosPrivate
-      .delete(`/api/v1/items/${item.id}/images/${image.id}`,{ withCredentials: true })
+      .delete(`/api/v1/items/${item.id}/images/${image.id}`)
       .then(result => {
         toast.success(`Successfully deleted ${image.name}`);
         setImages(result.data.images);

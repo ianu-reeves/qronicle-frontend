@@ -21,7 +21,7 @@ export default function PrimaryAppBar() {
   const handleSignOut = () => {
     setOpen(false);
     axiosPrivate
-      .post('/auth/signout', null, { withCredentials: true })
+      .post('/auth/signout')
       .then(result => {
         if (result.status === 204) {
           toast.success('Signed out successfully');
@@ -31,7 +31,7 @@ export default function PrimaryAppBar() {
           toast.error('An error occurred. Please try again');
         }
       })
-      .catch(e => console.log('ERROR', e))
+      .catch(() => {})
   };
 
   return (

@@ -1,5 +1,5 @@
 import StyledForm from "../components/StyledForm";
-import {Button, FormControl, Grid, InputLabel, Link, MenuItem, Select, Typography} from "@mui/material";
+import {Button, FormControl, Grid, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import {Field, Form, Formik} from "formik";
 import useAuth from "../hooks/useAuth";
 import ValidatedTextField from "../components/ValidatedTextField";
@@ -15,6 +15,7 @@ export default function EditProfilePage() {
   const axiosPrivate = useAxiosPrivate();
 
   const initialValues = {
+    username: currentUser.username,
     firstName: currentUser ? currentUser.firstName : '',
     lastName: currentUser ? currentUser.lastName : '',
     bio: currentUser ? currentUser.bio : '',
@@ -23,7 +24,7 @@ export default function EditProfilePage() {
 
   const handleSubmit = (values, { resetForm }) => {
     axiosPrivate
-      .put('/api/v1/users', values, { withCredentials: true })
+      .put('/api/v1/users', values)
       .then(results => {
         resetForm();
         setCurrentUser(results.data)

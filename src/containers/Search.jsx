@@ -1,4 +1,4 @@
-import {useNavigate, useSearchParams} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Button,
   Divider,
@@ -92,7 +92,7 @@ export default function Search() {
           }
 
         })
-        .catch(e => console.log(e));
+        .catch(() => {});
     }
   }, [page]);
 
@@ -125,7 +125,7 @@ export default function Search() {
         setResultCount(res.data.totalResults);
         setItems(res.data.items.sort(sortItems(sortMethod)));
       })
-      .catch(e => console.log(e));
+      .catch(() => {});
   };
 
   return (

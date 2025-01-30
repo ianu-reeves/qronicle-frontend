@@ -26,7 +26,7 @@ const ItemPage = () => {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/api/v1/items/${itemId}`, { withCredentials: true })
+      .get(`/api/v1/items/${itemId}`)
       .then(result => {
         setItem(result.data)
       })
@@ -57,6 +57,7 @@ const ItemPage = () => {
           <Grid container justifyContent='center' alignItems='center'>
             <Grid item>
               <img
+                alt={imageUrl}
                 src={imageUrl}
                 style={{ width: 800, maxWidth: '100%', height: 'auto' }}
               />

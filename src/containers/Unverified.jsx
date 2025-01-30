@@ -48,7 +48,6 @@ export default function Unverified() {
         {withCredentials: true}
       )
       .then((result) => {
-        console.log(result)
         toast.success("Your account was successfully verified");
         setCurrentUser(result.data.userDetails);
         navigate('/');

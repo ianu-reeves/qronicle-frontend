@@ -12,7 +12,7 @@ export default function Home() {
 
   const handleDeleteItem = (item) => {
     axios
-      .delete(`/api/v1/items/${item.id}`,{ withCredentials: true })
+      .delete(`/api/v1/items/${item.id}`)
       .then(() => {
         setItems(items.filter(i => i.id !== item.id));
         toast.success('Item deleted!');
@@ -22,10 +22,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get(`/api/v1/items/user/${currentUser?.username}`,
-        {
-          withCredentials: true,
-        })
+      .get(`/api/v1/items/user/${currentUser?.username}`)
       .then(results => {
         setItems(results.data)
       })

@@ -13,9 +13,7 @@ export default function TagInput({ form, field, maxTags, ...textFieldProps }) {
   const [options, setOptions] = React.useState([]);
   useEffect(() => {
     axiosPrivate
-      .get('/api/v1/tags',
-        { withCredentials: true }
-      )
+      .get('/api/v1/tags')
       .then(results => setOptions(results.data.map(tag => tag.description)))
       .catch(() => {});
   }, []);

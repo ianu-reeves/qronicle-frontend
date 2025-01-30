@@ -10,9 +10,9 @@ import ValidatedPasswordField from "../components/ValidatedPasswordField";
 export default function ChangePassword() {
   const axiosPrivate = useAxiosPrivate();
   const { formGridTextField } = useGlobalTheme();
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = (values) => {
     axiosPrivate
-      .post('/auth/changePassword', values, { withCredentials: true })
+      .post('/auth/changePassword', values)
       .then(result => {
         if (result.status === 204) {
           toast.success("Your password was updated successfully");
@@ -29,7 +29,7 @@ export default function ChangePassword() {
       onSubmit={handleSubmit}
       validationSchema={changePasswordSchema}
     >
-      {formik => (
+      {() => (
         <Form>
           <StyledForm>
             <Grid item sx={{ marginTop: 2 }}>

@@ -21,7 +21,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     axios
-      .get(`api/v1/users/${username}`, { withCredentials: true })
+      .get(`api/v1/users/${username}`)
       .then(data => {
         setUser(data.data);
         setLoading(false);
@@ -35,7 +35,7 @@ export default function ProfilePage() {
 
   const handleDeleteItem = (item) => {
     axios
-      .delete(`/api/v1/items/${item.id}`,{ withCredentials: true })
+      .delete(`/api/v1/items/${item.id}`)
       .then(() => {
         setItems(items.filter(i => i.id !== item.id));
         toast.success('Item deleted!');
@@ -45,7 +45,7 @@ export default function ProfilePage() {
 
   const loadItems = () => {
     axios
-      .get(`/api/v1/items/user/${username}`, { withCredentials: true })
+      .get(`/api/v1/items/user/${username}`)
       .then(results => {
         setItems(results.data);
         setLoadedItems(true);

@@ -129,7 +129,6 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem })
               <Tag
                 key={tag.description}
                 tag={tag}
-                handleChipClick={() => console.log(tag.description)}
               />
             )}
           </Grid>
