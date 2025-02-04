@@ -35,7 +35,7 @@ const ItemPage = () => {
 
   return (
     <div style={{ padding: 10 }}>
-      {item !== null && <ItemCard itemProperties={item} onClickImage={handleImageClick} />}
+      {item !== null && <ItemCard itemProperties={item} onClickImage={handleImageClick} imageHeight={window.innerHeight * 0.7} />}
       <Dialog
         open={modalOpen}
         fullWidth

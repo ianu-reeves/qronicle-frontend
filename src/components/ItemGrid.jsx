@@ -1,18 +1,16 @@
 import {Grid} from "@mui/material";
 import ItemCard from "./ItemCard";
+import useResize from "../hooks/useResize";
 
 export default function ItemGrid({ items, onClickImage, onDeleteItem }) {
+  const size = useResize();
+
   // determines width of cards in grid. operates such that rows have max of 3 items each (12/ 4 = 3)
   const getWidth = () => {
-    switch (items.length) {
-      case 0:
-      case 1:
-        return 12;
-      case 2:
-        return 6;
-      default:
-        return 4;
-    }
+    if (size.width >= 1600) return 3; // 4 cards
+    if (size.width >= 1200) return 4; // 3 cards
+    if (size.width >= 800) return 6; // 2 cards
+    return 12; // 1 card
   };
 
   return (
@@ -39,6 +37,7 @@ export default function ItemGrid({ items, onClickImage, onDeleteItem }) {
               itemProperties={item}
               onClickImage={onClickImage}
               onDeleteItem={() => onDeleteItem(item)}
+              imageHeight={400}
             />
           </Grid>
         )}

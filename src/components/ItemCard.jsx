@@ -17,11 +17,10 @@ import { NavLink } from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
 import Tag from "./Tag";
 
-export default function ItemCard({ itemProperties, onClickImage, onDeleteItem }) {
+export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, imageHeight }) {
   const images = itemProperties.images;
   const [open, setOpen] = useState(false);
   const { currentUser } = useAuth();
-  const MEDIA_HEIGHT = 400;
 
   const getCarouselProperties = () => {
     if (images.length <= 1) return {
@@ -67,7 +66,7 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem })
         <CardContent id={`item-card-content-${itemProperties.id}`}>
           {<Carousel
                 duration={1000}
-                height={MEDIA_HEIGHT}
+                height={imageHeight}
                 {...getCarouselProperties()}
               >
                 {itemProperties?.images?.length > 0
