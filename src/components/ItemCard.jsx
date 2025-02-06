@@ -4,7 +4,7 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Dialog, DialogActions,
+  Dialog, DialogActions, DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
@@ -16,10 +16,13 @@ import { convertDateWithBreaksUS } from "../util/utils";
 import { NavLink } from "react-router-dom";
 import UndecoratedNavLink from "./UndecoratedNavLink";
 import Tag from "./Tag";
+import {QrCode2} from "@mui/icons-material";
+import QRCode from "qrcode";
 
 export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, imageHeight }) {
   const images = itemProperties.images;
   const [open, setOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState(<></>);
   const { currentUser } = useAuth();
 
   const getCarouselProperties = () => {
@@ -27,19 +30,11 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
       IndicatorIcon: null,
       navButtonsAlwaysInvisible: true,
     }
-  }
-
-  const handleDeleteItem = (item) => {
-    onDeleteItem(item);
-    setOpen(false);
   };
 
-  return (
-    <div style={{ height: '100%' }}>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-      >
+  const imageContent = () => {
+    return (
+      <>
         <DialogTitle>
           Delete '{itemProperties.name}'?
         </DialogTitle>
@@ -61,6 +56,68 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
             Delete
           </Button>
         </DialogActions>
+      </>
+    );
+  };
+
+  const qrContent = (url) => {
+    return (
+      <>
+        <DialogTitle>
+          QR code for {itemProperties.name}
+        </DialogTitle>
+        <DialogContent>
+          <Grid container justifyContent='center'>
+            <Grid item>
+              <img
+                src={url}
+                alt={`QR code generated for ${itemProperties.name}`}
+                style={{
+                  height: 512,
+                  width: 512
+                }}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogContentText sx={{ padding: 2 }}>
+          Print this code off and attach it to your item, then scan it at any time to be brought right back to this page.
+          If your item's privacy is set to 'Public', anyone can scan this code.
+        </DialogContentText>
+        <DialogActions>
+          <Button variant='outlined' onClick={() => setOpen(false)}>
+            Close
+          </Button>
+          <Button href={url} variant='contained' download={`${itemProperties.name}_QR.png`}>
+            Download
+          </Button>
+        </DialogActions>
+      </>
+    );
+  };
+
+  const showQrCode = async () => {
+    const url = await QRCode.toDataURL(
+    `${process.env.REACT_APP_FRONTEND_ROOT_URL}/items/${itemProperties.id}`,
+      { errorCorrectionLevel: 'H' }
+    );
+    console.log(url)
+    setDialogContent(qrContent(url));
+    setOpen(true);
+  };
+
+  const handleDeleteItem = (item) => {
+    onDeleteItem(item);
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ height: '100%' }}>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+      >
+        {dialogContent}
       </Dialog>
       <Card id={`item-card-${itemProperties.id}`} sx={{ height: '100%', width: '100%' }}>
         <CardContent id={`item-card-content-${itemProperties.id}`}>
@@ -103,6 +160,14 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
           </Typography>
           {currentUser.username === itemProperties.owner.username &&
             <>
+              <Button
+                variant='contained'
+                startIcon={<QrCode2 />}
+                sx={{ marginTop: 2, marginRight: 1, marginLeft: 1 }}
+                onClick={showQrCode}
+              >
+                Get QR
+              </Button>
               <NavLink to={`/items/${itemProperties.id}/edit`}>
                 <Button variant="outlined" sx={{ marginTop: 2, marginRight: 1 }}>Edit item</Button>
               </NavLink>
@@ -110,7 +175,10 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
                 variant='outlined'
                 sx={{ marginTop: 2, marginLeft: 1 }}
                 color='error'
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                  setDialogContent(imageContent);
+                  setOpen(true);
+                }}
               >
                 Delete item
               </Button>
