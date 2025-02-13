@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import * as yup from 'yup';
 import {
   Alert,
-  Button,
+  Button, CircularProgress,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Divider,
   Grid, Link,
@@ -20,15 +20,16 @@ import {toast} from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
 
-const LOGIN_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/login`
-const AUTHORIZATION_BASE_URL = 'http://localhost:8080/auth/oauth2/authorization';
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/login`;
+const AUTHORIZATION_BASE_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/oauth2/authorization`;
 
 export default function Login() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
-  const [showResetWindow, setShowResetWindow] = React.useState(false);
-  const [dialogContent, setDialogContent] = React.useState(<></>);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [showResetWindow, setShowResetWindow] = useState(false);
+  const [dialogContent, setDialogContent] = useState(<></>);
+  const [loggingIn, setLoggingIn] = useState(false)
   const { setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const AVATAR_SIZE = 24;
@@ -40,6 +41,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoggingIn(true);
     await axios.post(
       LOGIN_URL,
       JSON.stringify({ username, password }),
@@ -50,6 +52,7 @@ export default function Login() {
     )
     .then(result => {
       clearState();
+      console.log(result.data.userDetails)
       setCurrentUser(result.data.userDetails);
       // TODO: use location to return to previous page
       toast(`Welcome back, ${result.data.userDetails.username}!`)
@@ -149,88 +152,100 @@ export default function Login() {
         sx={{ marginTop: '10%' }}
       >
         <Paper sx={{ padding: 3, width: '50%' }}>
-          <form onSubmit={handleSubmit}>
-            <Grid item>
-              <Typography variant="h4">Sign in</Typography>
-            </Grid>
-            <Grid item>
-            {error
-              ? <Alert
-                variant="filled"
-                severity="error"
-                sx={{ marginBottom: 1 }}
-              >
-                {error}
-              </Alert>
-              : null
-            }
-            </Grid>
-            <Grid item sx={{ padding: 1 }}>
-              <TextField
-                fullWidth
-                required
-                label="Username"
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </Grid>
-            <Grid item sx={{ padding: 1 }}>
-              <TextField
-                fullWidth
-                type="password"
-                required
-                label="Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Grid>
-            <Grid item sx={{ padding: 1 }}>
-              <Button
-                variant="contained"
-                type="submit"
-              >
-                Log in
-              </Button>
-            </Grid>
-            <Grid item sx={{ padding: 1, marginBottom: 2 }}>
-              <Typography variant='subtitle2'>
-                <Link sx={{ textDecoration: 'none', cursor: 'pointer' }} onClick={handleOpenDialog}>
-                  Forgot your password?
-                </Link>
+          {loggingIn
+            ? <>
+              <Typography variant='h4'>
+                Logging in... Please wait...
               </Typography>
-            </Grid>
-          </form>
-          <Divider sx={{ marginBottom: 2 }}>
-            <Typography variant="h5">
-              OR
-            </Typography>
-          </Divider>
-          <Grid item sx={{ padding: 1 }}>
-            <LinkedLogoButton
-              src={GOOGLE_LOGO}
-              href={`${AUTHORIZATION_BASE_URL}/google`}
-              avatarSize={AVATAR_SIZE}
-              buttonText='Log in with Google'
-            />
-          </Grid>
-          <Grid item sx={{ padding: 1, marginBottom: 2 }}>
-            <LinkedLogoButton
-              src={GITHUB_LOGO}
-              href={`${AUTHORIZATION_BASE_URL}/github`}
-              avatarSize={AVATAR_SIZE}
-              buttonText='Log in with GitHub'
-            />
-          </Grid>
-          <Divider />
-          <Grid item sx={{ padding: 1 }}>
-            <Typography variant="h5">Need an account?</Typography>
-            <Button
-              variant="outlined"
-              component="a"
-              href="/register"
-              sx={{ marginTop: 2 }}
-            >
-              Register Now
-            </Button>
-          </Grid>
+              <CircularProgress />
+            </>
+            : <>
+              <form onSubmit={handleSubmit}>
+                <Grid item>
+                  <Typography variant="h4">Sign in</Typography>
+                </Grid>
+                <Grid item>
+                {error
+                  ? <Alert
+                    variant="filled"
+                    severity="error"
+                    sx={{ marginBottom: 1 }}
+                  >
+                    {error}
+                  </Alert>
+                  : null
+                }
+                </Grid>
+                <Grid item sx={{ padding: 1 }}>
+                  <TextField
+                    fullWidth
+                    required
+                    label="Username"
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </Grid>
+                <Grid item sx={{ padding: 1 }}>
+                  <TextField
+                    fullWidth
+                    type="password"
+                    required
+                    label="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Grid>
+                <Grid item sx={{ padding: 1 }}>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                  >
+                    Log in
+                  </Button>
+                </Grid>
+                <Grid item sx={{ padding: 1, marginBottom: 2 }}>
+                  <Typography variant='subtitle2'>
+                    <Link sx={{ textDecoration: 'none', cursor: 'pointer' }} onClick={handleOpenDialog}>
+                      Forgot your password?
+                    </Link>
+                  </Typography>
+                </Grid>
+              </form>
+              <Divider sx={{ marginBottom: 2 }}>
+                <Typography variant="h5">
+                  OR
+                </Typography>
+              </Divider>
+              <Grid item sx={{ padding: 1 }}>
+                <LinkedLogoButton
+                  src={GOOGLE_LOGO}
+                  href={`${AUTHORIZATION_BASE_URL}/google`}
+                  onClick={() => setLoggingIn(true)}
+                  avatarSize={AVATAR_SIZE}
+                  buttonText='Log in with Google'
+                />
+              </Grid>
+              <Grid item sx={{ padding: 1, marginBottom: 2 }}>
+                <LinkedLogoButton
+                  src={GITHUB_LOGO}
+                  href={`${AUTHORIZATION_BASE_URL}/github`}
+                  onClick={() => setLoggingIn(true)}
+                  avatarSize={AVATAR_SIZE}
+                  buttonText='Log in with GitHub'
+                />
+              </Grid>
+              <Divider />
+              <Grid item sx={{ padding: 1 }}>
+                <Typography variant="h5">Need an account?</Typography>
+                <Button
+                  variant="outlined"
+                  component="a"
+                  href="/register"
+                  sx={{ marginTop: 2 }}
+                >
+                  Register Now
+                </Button>
+              </Grid>
+            </>
+          }
         </Paper>
       </Grid>
 

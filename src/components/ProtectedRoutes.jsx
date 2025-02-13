@@ -38,7 +38,7 @@ export default function ProtectedRoutes() {
               <Typography>Loading... Please wait</Typography>
             </>
           )
-          : currentUser.verified
+          : currentUser.roles.filter(role => role.name === 'ROLE_VERIFIED').length > 0
             ? <Outlet />
             : <Navigate to='/unverified' />
       }

@@ -101,7 +101,6 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
     `${process.env.REACT_APP_FRONTEND_ROOT_URL}/items/${itemProperties.id}`,
       { errorCorrectionLevel: 'H' }
     );
-    console.log(url)
     setDialogContent(qrContent(url));
     setOpen(true);
   };

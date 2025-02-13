@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Alert, Button, Grid, InputAdornment, Typography} from "@mui/material";
+import {Alert, Button, Grid, Typography} from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
@@ -16,8 +16,10 @@ export default function Unverified() {
   const [error, setError] = React.useState('');
   const [awaitingSubmission, setAwaitingSubmission] = React.useState(false);
 
-  useEffect(() => {
-    (currentUser.verified || !(Object.keys(currentUser).length > 0)) && navigate('/');
+  useEffect(() => {(
+      currentUser.roles?.filter(role => role.name === 'ROLE_VERIFIED').length > 0
+      || !(Object.keys(currentUser).length > 0)
+    ) && navigate('/');
   }, []);
 
   const handleClickResend = () => {
@@ -41,11 +43,11 @@ export default function Unverified() {
   };
 
   const handleClickVerify = (values, { resetForm }) => {
+    const { username, verificationCode } = values;
     axios
       .post(
         `/auth/verifyRegistration`,
-        { verificationCode: values.verificationCode.toUpperCase() },
-        {withCredentials: true}
+        JSON.stringify({ verificationToken: verificationCode, username }),
       )
       .then((result) => {
         toast.success("Your account was successfully verified");
@@ -53,6 +55,7 @@ export default function Unverified() {
         navigate('/');
       })
       .catch(e => {
+        toast.error("There was an error verifying your account")
         setError(e.response.data)
       })
       .finally(() => resetForm());
@@ -62,6 +65,8 @@ export default function Unverified() {
     <Formik
       initialValues={{
         verificationCode: '',
+        username: '',
+        showUsername: currentUser.accountProvider !== 'LOCAL',
       }}
       onSubmit={handleClickVerify}
       validationSchema={verificationCodeSchema}
@@ -71,7 +76,7 @@ export default function Unverified() {
           <StyledForm paperStyle={{ maxWidth: '75%', marginTop: 2 }}>
             <Grid item>
               <Typography variant='h4'>
-                Your account is not yet verified
+                Almost there! We just need to get you verified
               </Typography>
             </Grid>
             <Grid item>
@@ -95,7 +100,8 @@ export default function Unverified() {
             </Grid>
             <Grid item>
               <Typography variant='h5'>
-                Enter your 6 digit verification code in the box below
+                Enter your 6 digit verification code {currentUser.accountProvider !== 'LOCAL'
+                && 'and choose a username'}
               </Typography>
             </Grid>
             {error &&
@@ -105,27 +111,38 @@ export default function Unverified() {
               </Alert>
             </Grid>
             }
-            <Grid item sx={{ marginTop: 1, marginBottom: 2, minWidth: '60%' }}>
+            <Grid item sx={{ marginTop: 1, marginBottom: 1, minWidth: '60%' }}>
               <Field
                 fullWidth
+                required
                 autoComplete='off'
                 name='verificationCode'
                 placeholder='Enter code here'
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <Button
-                        disabled={!(formik.dirty && (Object.keys(formik.errors).length === 0))}
-                        variant='contained'
-                        type='submit'
-                      >
-                        Verify
-                      </Button>
-                    </InputAdornment>
-                )}}
                 inputProps={{ maxLength: 6 }}
                 component={ValidatedTextField}
               />
+            </Grid>
+            {currentUser.accountProvider !== 'LOCAL' &&
+              <Grid item sx={{ marginBottom: 1, minWidth: '60%' }}>
+                <Field
+                  fullWidth
+                  required={currentUser.accountProvider !== 'LOCAL'}
+                  autoComplete='off'
+                  name='username'
+                  placeholder='Please choose a username'
+                  sx={{ maxWidth: '75%' }}
+                  component={ValidatedTextField}
+                />
+              </Grid>
+            }
+            <Grid item sx={{ marginTop: 1, marginBottom: 2 }}>
+              <Button
+                disabled={!(formik.dirty && (Object.keys(formik.errors).length === 0))}
+                variant='contained'
+                type='submit'
+              >
+                Verify
+              </Button>
             </Grid>
           </StyledForm>
         </Form>
