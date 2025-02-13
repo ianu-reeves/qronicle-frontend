@@ -91,7 +91,7 @@ export default function Login() {
     setDialogContent(successDialogContent);
 
     axios
-      .post('/api/v1/users/requestPasswordReset', values)
+      .post(`${process.env.REACT_APP_BACKEND_ROOT_URL}/api/v1/users/requestPasswordReset`, values)
       .catch(() => toast.error("There was an issue with your request. Please try again"));
   };
 

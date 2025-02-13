@@ -74,7 +74,9 @@ export default function ItemCard({ itemProperties, onClickImage, onDeleteItem, i
                 alt={`QR code generated for ${itemProperties.name}`}
                 style={{
                   height: 512,
-                  width: 512
+                  width: 512,
+                  maxHeight: '100%',
+                  maxWidth: '100%',
                 }}
               />
             </Grid>
