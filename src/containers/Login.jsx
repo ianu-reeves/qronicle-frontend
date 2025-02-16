@@ -52,7 +52,6 @@ export default function Login() {
     )
     .then(result => {
       clearState();
-      console.log(result.data.userDetails)
       setCurrentUser(result.data.userDetails);
       // TODO: use location to return to previous page
       toast(`Welcome back, ${result.data.userDetails.username}!`)
