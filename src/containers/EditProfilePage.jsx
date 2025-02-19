@@ -21,7 +21,7 @@ export default function EditProfilePage() {
     bio: currentUser ? currentUser.bio : '',
     privacyStatus: currentUser ? currentUser.privacyStatus : ''
   }
-
+  console.log(currentUser)
   const handleSubmit = (values, { resetForm }) => {
     axiosPrivate
       .put('/api/v1/users', values)
@@ -98,7 +98,7 @@ export default function EditProfilePage() {
             <Grid item sx={{ marginBottom: 2 }}>
               <Typography>
                 Click <UndecoratedNavLink to='/profile/changePassword'>HERE</UndecoratedNavLink> to change your password
-                or <UndecoratedNavLink to='/change-email'>HERE</UndecoratedNavLink> to change your email address
+                or <UndecoratedNavLink to='/profile/changeEmail'>HERE</UndecoratedNavLink> to change your email address
               </Typography>
             </Grid>
           </StyledForm>

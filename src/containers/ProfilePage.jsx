@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Grid, Typography} from "@mui/material";
 import StyledForm from "../components/StyledForm";
 import {useNavigate, useParams} from "react-router-dom";
@@ -8,6 +8,7 @@ import useAuth from "../hooks/useAuth";
 import {Edit} from "@mui/icons-material";
 import {convertDateWithLongMonth} from "../util/utils";
 import {toast} from "react-toastify";
+import LoadingData from "../components/LoadingData";
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -16,8 +17,9 @@ export default function ProfilePage() {
   const axios = useAxiosPrivate();
   const [user, setUser] = React.useState(null);
   const [items, setItems] = React.useState([]);
-  const [loadedItems, setLoadedItems] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [loadingItems, setLoadingItems] = useState(false);
+  const [fetchedItems, setFetchedItems] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -44,18 +46,20 @@ export default function ProfilePage() {
   };
 
   const loadItems = () => {
+    setLoadingItems(true);
     axios
       .get(`/api/v1/items/user/${username}`)
       .then(results => {
         setItems(results.data);
-        setLoadedItems(true);
+        setFetchedItems(true);
+        setLoadingItems(false);
       })
       .catch(() => {});
   }
 
   return (
     loading
-      ? <Typography>Loading...</Typography>
+      ? <LoadingData />
       : <StyledForm paperStyle={{width: '75%', marginTop: 2}}>
         <Grid item>
           <Typography variant='h3'>{user?.username}</Typography>
@@ -77,6 +81,13 @@ export default function ProfilePage() {
                 Last Name: {user?.lastName}
               </Typography>
             </Grid>
+            {currentUser.username === username &&
+              <Grid item>
+                <Typography id='profile-email'>
+                  Email address: {user?.email}
+                </Typography>
+              </Grid>
+            }
             <Grid item>
               <Typography id='profile-signup-date'>
                 Member since {convertDateWithLongMonth(user?.signupDate)}
@@ -90,15 +101,17 @@ export default function ProfilePage() {
           </Grid>
         </Grid>
         <Grid item sx={{marginBottom: 2}}>
-          {items.length > 0
-            ? <ItemGrid items={items} onDeleteItem={handleDeleteItem} />
-            : loadedItems
-              ? <Typography variant='h5'>
-                This user has not uploaded any items yet.
-              </Typography>
-              : <Button variant='contained' onClick={loadItems}>
-                Load items
-              </Button>
+          {loadingItems
+            ? <LoadingData />
+            : items.length > 0
+              ? <ItemGrid items={items} onDeleteItem={handleDeleteItem} />
+              : fetchedItems
+                ? <Typography variant='h5'>
+                  This user has not uploaded any items yet.
+                </Typography>
+                : <Button variant='contained' onClick={loadItems}>
+                  Load items
+                </Button>
           }
         </Grid>
       </StyledForm>

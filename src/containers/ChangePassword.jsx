@@ -6,18 +6,21 @@ import {changePasswordSchema} from "../validation/changePasswordSchema";
 import {Button, Grid, Typography} from "@mui/material";
 import useGlobalTheme from "../hooks/useGlobalTheme";
 import ValidatedPasswordField from "../components/ValidatedPasswordField";
+import useAuth from "../hooks/useAuth";
 
 export default function ChangePassword() {
   const axiosPrivate = useAxiosPrivate();
+  const { currentUser } = useAuth();
   const { formGridTextField } = useGlobalTheme();
-  const handleSubmit = (values) => {
+  const handleSubmit = (values, { resetForm }) => {
     axiosPrivate
-      .post('/auth/changePassword', values)
+      .patch(`/api/v1/users/${currentUser.username}/update/password`, values)
       .then(result => {
-        if (result.status === 204) {
+        if (result.status === 200) {
           toast.success("Your password was updated successfully");
         }
-      })
+      }).catch()
+      .finally(() => resetForm());
   }
   return (
     <Formik

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import * as yup from 'yup';
 import {
   Alert,
-  Button, CircularProgress,
+  Button,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Divider,
   Grid, Link,
@@ -19,6 +19,7 @@ import LinkedLogoButton from "../components/LinkedLogoButton";
 import {toast} from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import ValidatedTextField from "../components/ValidatedTextField";
+import LoadingData from "../components/LoadingData";
 
 const LOGIN_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/login`;
 const AUTHORIZATION_BASE_URL = `${process.env.REACT_APP_BACKEND_ROOT_URL}/auth/oauth2/authorization`;
@@ -63,6 +64,7 @@ export default function Login() {
       } else {
         setError("There was an error signing in. Please try again")
       }
+      setLoggingIn(false);
     });
   };
 
@@ -152,12 +154,7 @@ export default function Login() {
       >
         <Paper sx={{ padding: 3, width: '50%' }}>
           {loggingIn
-            ? <>
-              <Typography variant='h4'>
-                Logging in... Please wait...
-              </Typography>
-              <CircularProgress />
-            </>
+            ? <LoadingData loadingText='Logging in... Please wait...' />
             : <>
               <form onSubmit={handleSubmit}>
                 <Grid item>
