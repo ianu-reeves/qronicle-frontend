@@ -1,17 +1,11 @@
-import {createTheme, Grid, ThemeProvider, Typography} from "@mui/material";
+import {Grid, Typography} from "@mui/material";
 import StyledForm from "./StyledForm";
 import '@fontsource/oswald'
+import UndecoratedNavLink from "./UndecoratedNavLink";
 
 export default function EmptyHomePage() {
-  const typographyTheme = createTheme({
-    typography: {
-      fontFamily: ['Oswald', 'sans-serif'].join(','),
-      fontWeightBold: '700',
-    }
-  });
 
   return (
-    <ThemeProvider theme={typographyTheme}>
     <StyledForm
       paperStyle={{
         maxWidth: '75%',
@@ -19,28 +13,27 @@ export default function EmptyHomePage() {
         padding: 1,
       }}
     >
-      <Grid item>
+      <Grid item sx={{ marginBottom: 2 }}>
         <Typography variant='h2' sx={{ fontStyle: 'bold' }}>
-          There's nothing here...
+          There's nothing here... yet!
         </Typography>
       </Grid>
-      <Grid item>
-        <Typography variant='h4'>
-          ...but you can change that! After you upload items, you can view them here on your home page
+      <Grid item sx={{ marginBottom: 2 }}>
+        <Typography variant='h6'>
+          But you can change that! After you upload items, they will be visible here on your home page and on your profile
         </Typography>
       </Grid>
-      <Grid item>
-        <Typography variant='h4'>
-          Need a hand getting started? Click here for a quick run through of the process
-        </Typography>
-      </Grid>
-      <Grid item>
-        <Typography variant='h4'>
-          Click here to start chronicling your memories today & ensure you never forget the small things that
+      <Grid item sx={{ marginBottom: 2 }}>
+        <Typography variant='h6'>
+          <UndecoratedNavLink to={'/items/create'}>Click here</UndecoratedNavLink> to start chronicling your memories today & ensure you never forget the small things that
           enrich your life
         </Typography>
       </Grid>
+      <Grid item sx={{ marginBottom: 2 }}>
+        <Typography variant='h6'>
+          Need some inspiration? Check out what other users have uploaded by using the search bar at the top of the screen! For example, try searching for 'hoya' to see what some plant lovers have uploaded
+        </Typography>
+      </Grid>
     </StyledForm>
-    </ThemeProvider>
   );
 };
